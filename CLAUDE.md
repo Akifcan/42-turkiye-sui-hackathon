@@ -37,3 +37,7 @@ This project leverages the Sui blockchain to provide:
 - User ownership of their link pages
 - Transparent analytics
 - Potential for NFT integration and monetization
+
+## Frontend Requirements
+
+**Important: The frontend must always utilize sponsored gas fees for all transactions. This ensures a seamless user experience where users can interact with the application without needing to hold SUI tokens or worry about transaction costs. All gas fees should be covered by the application through Sui's sponsored transaction feature.**
