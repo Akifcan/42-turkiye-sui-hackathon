@@ -7,6 +7,7 @@ import DonationWidget from "../features/donations/DonationWidget";
 import DonationHistory from "../features/donations/DonationHistory";
 import TopSupporters from "../features/donations/TopSupporters";
 import { ProfileData } from "../types";
+import UniqueLoading from "../components/ui/UniqueLoading";
 
 export function ProfilePage() {
   const { username } = useParams<{ username: string }>();
@@ -63,8 +64,11 @@ export function ProfilePage() {
               justifyContent: "center",
               alignItems: "center",
               minHeight: "60vh",
+              flexDirection: "column",
+              gap: "var(--spacing-md)",
             }}
           >
+            <UniqueLoading size="lg" />
             <p
               style={{
                 fontSize: "20px",
@@ -124,11 +128,40 @@ export function ProfilePage() {
 
         {/* Donation Section - always render when profileData is loaded */}
         {!loading && !error && profileData && (
-          <>
-            <DonationWidget recipientAddress={recipientAddress} />
-            <DonationHistory profileOwnerAddress={ownerForLists} />
-            <TopSupporters profileOwnerAddress={ownerForLists} />
-          </>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "clamp(20px, 3vw, 28px)",
+              width: "100%",
+            }}
+          >
+            <div
+              style={{
+                width: "100%",
+                maxWidth: "clamp(280px, 50vw, 600px)",
+              }}
+            >
+              <DonationWidget recipientAddress={recipientAddress} />
+            </div>
+            <div
+              style={{
+                width: "100%",
+                maxWidth: "clamp(280px, 50vw, 600px)",
+              }}
+            >
+              <DonationHistory profileOwnerAddress={ownerForLists} />
+            </div>
+            <div
+              style={{
+                width: "100%",
+                maxWidth: "clamp(280px, 50vw, 600px)",
+              }}
+            >
+              <TopSupporters profileOwnerAddress={ownerForLists} />
+            </div>
+          </div>
         )}
 
         {/* No Profile Data State */}

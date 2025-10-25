@@ -12,67 +12,106 @@ export function Card({ children, style, className = "" }: CardProps) {
       className={`card ${className}`}
       style={{
         position: "relative",
-        backgroundColor: "rgba(255, 255, 255, 0.15)",
-        backdropFilter: "blur(20px) saturate(200%)",
-        WebkitBackdropFilter: "blur(20px) saturate(200%)",
         borderRadius: "var(--radius-m)",
         padding: "var(--spacing-xl)",
-        border: "1px solid rgba(255, 255, 255, 0.4)",
-        boxShadow: `
-          0 8px 32px 0 rgba(104, 184, 215, 0.2),
-          inset 0 1px 0 0 rgba(255, 255, 255, 0.3),
-          0 4px 16px 0 rgba(255, 255, 255, 0.1)
-        `,
         overflow: "hidden",
+        boxShadow: "0 6px 6px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 0, 0, 0.1)",
         ...style,
       }}
     >
-      {/* Liquid glass shimmer effect */}
+      {/* SVG Filter for Glass Distortion */}
+      <svg style={{ position: "absolute", width: 0, height: 0 }}>
+        <filter
+          id="card-glass-distortion"
+          x="0%"
+          y="0%"
+          width="100%"
+          height="100%"
+          filterUnits="objectBoundingBox"
+        >
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.001 0.005"
+            numOctaves="1"
+            seed="17"
+            result="turbulence"
+          />
+          <feComponentTransfer in="turbulence" result="mapped">
+            <feFuncR type="gamma" amplitude="1" exponent="10" offset="0.5" />
+            <feFuncG type="gamma" amplitude="0" exponent="1" offset="0" />
+            <feFuncB type="gamma" amplitude="0" exponent="1" offset="0.5" />
+          </feComponentTransfer>
+          <feGaussianBlur in="turbulence" stdDeviation="3" result="softMap" />
+          <feSpecularLighting
+            in="softMap"
+            surfaceScale="5"
+            specularConstant="1"
+            specularExponent="100"
+            lightingColor="white"
+            result="specLight"
+          >
+            <fePointLight x="-200" y="-200" z="300" />
+          </feSpecularLighting>
+          <feComposite
+            in="specLight"
+            operator="arithmetic"
+            k1="0"
+            k2="1"
+            k3="1"
+            k4="0"
+            result="litImage"
+          />
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="softMap"
+            scale="200"
+            xChannelSelector="R"
+            yChannelSelector="G"
+          />
+        </filter>
+      </svg>
+
+      {/* Glass Backdrop Layer */}
       <div
         style={{
           position: "absolute",
-          top: "-50%",
-          left: "-50%",
-          width: "200%",
-          height: "200%",
-          background:
-            "linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%)",
-          pointerEvents: "none",
-          opacity: 0.6,
-          transform: "rotate(45deg)",
+          inset: 0,
+          zIndex: 0,
+          overflow: "hidden",
+          borderRadius: "var(--radius-m)",
+          backdropFilter: "blur(3px)",
+          WebkitBackdropFilter: "blur(3px)",
+          filter: "url(#card-glass-distortion)",
+          isolation: "isolate",
         }}
       />
 
-      {/* Top glass shine */}
+      {/* White overlay */}
       <div
         style={{
           position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: "50%",
-          background:
-            "linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, transparent 100%)",
-          pointerEvents: "none",
+          inset: 0,
+          zIndex: 1,
+          background: "rgba(255, 255, 255, 0.25)",
+          borderRadius: "var(--radius-m)",
+        }}
+      />
+
+      {/* Inner Glass Highlights */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          zIndex: 2,
+          borderRadius: "var(--radius-m)",
+          overflow: "hidden",
+          boxShadow:
+            "inset 2px 2px 1px 0 rgba(255, 255, 255, 0.5), inset -1px -1px 1px 1px rgba(255, 255, 255, 0.5)",
         }}
       />
 
       {/* Content */}
-      <div style={{ position: "relative", zIndex: 1 }}>{children}</div>
-
-      {/* Bottom liquid reflection */}
-      <div
-        style={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: "40%",
-          background:
-            "linear-gradient(to top, rgba(104, 184, 215, 0.15) 0%, transparent 100%)",
-          pointerEvents: "none",
-        }}
-      />
+      <div style={{ position: "relative", zIndex: 10 }}>{children}</div>
     </div>
   );
 }

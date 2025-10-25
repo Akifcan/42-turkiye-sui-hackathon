@@ -96,3 +96,77 @@ h3 {
   font-size: 20px;
   line-height: 1.4;
 }
+
+/* Liquid Glass Background Animation */
+@keyframes moveBackground {
+  from {
+    background-position: 0% 0%;
+  }
+  to {
+    background-position: 0% -1000%;
+  }
+}
+
+@theme inline {
+  @keyframes moveBackground {
+  from {
+    background-position: 0% 0%;
+    }
+  to {
+    background-position: 0% -1000%;
+    }
+  }
+}
+
+/* Morph Loading Animation */
+@keyframes morph-0 {
+  0%, 100% {
+    transform: translate(-12px, -12px) scale(1);
+    border-radius: 50%;
+    opacity: 0.8;
+  }
+  50% {
+    transform: translate(12px, 12px) scale(1.2);
+    border-radius: 0%;
+    opacity: 1;
+  }
+}
+
+@keyframes morph-1 {
+  0%, 100% {
+    transform: translate(12px, -12px) scale(1);
+    border-radius: 0%;
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-12px, 12px) scale(1.2);
+    border-radius: 50%;
+    opacity: 0.8;
+  }
+}
+
+@keyframes morph-2 {
+  0%, 100% {
+    transform: translate(-12px, 12px) scale(1.2);
+    border-radius: 50%;
+    opacity: 0.8;
+  }
+  50% {
+    transform: translate(12px, -12px) scale(1);
+    border-radius: 0%;
+    opacity: 1;
+  }
+}
+
+@keyframes morph-3 {
+  0%, 100% {
+    transform: translate(12px, 12px) scale(1);
+    border-radius: 0%;
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-12px, -12px) scale(1.2);
+    border-radius: 50%;
+    opacity: 0.8;
+  }
+}
