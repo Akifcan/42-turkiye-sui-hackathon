@@ -1,3 +1,20 @@
+about.move
+
+DEPLOY ETME
+
+sui client publish
+
+sui client call \                                                                   
+    --package PAKET_ID \
+    --module about \
+    --function create_profile \
+    --args "Akif" "Yılmaz" "akif@example.com" "https://example.com" "Merhaba, ben bir yazılım geliştiriciyim" \
+    --gas-budget 10000000
+
+ProfileRegistry ID Kayıt et
+
+sui client object 0x14de030fbeddf0835f52759ed6aad1dec732612f9ee5f105ac36676f6713ef0b
+
 list.move
 
 DEPLOY ETME
