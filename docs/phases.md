@@ -200,11 +200,11 @@ flowchart TD
 **Duration:** 1 hafta  
 **Status:** ✅ Complete  
 **Key Deliverables:**
-- React Router implementation
-- Dynamic profile URLs (`/:username`)
-- Walrus Sites deployment
-- SuiNS domain integration
-- Production-ready build
+- ✅ React Router implementation
+- ✅ Dynamic profile URLs (`/:username`)
+- ✅ **Walrus Sites deployment** (DEPLOYED!)
+- ✅ SuiNS domain integration
+- ✅ Production-ready build
 
 **Technical Tasks:**
 ```bash
@@ -237,23 +237,257 @@ site-builder deploy ./dist --epochs 1
 
 ---
 
-### 🎯 **FAZ 4: NFT-GATED EXCLUSIVE CONTENT** (ŞİMDİ)
+---
+
+## 🏁 HACKATHON SPRINT (ŞİMDİ - 10 SAAT)
+
+---
+
+## ⚠️ KNOWN ISSUES - Mevcut Güvenlik Açıkları ve Eksikler
+
+### 🚨 KRİTİK GÜVENLİK SORUNLARI:
+
+**1. Ownership Kontrolü YOK**
+- ❌ **Sorun:** `list::add_link` ve `nft_list::add_nft` fonksiyonları sadece username parametresi alıyor
+- ❌ **Risk:** Herhangi bir kullanıcı, başkasının username'ini yazıp o profilin linklerini/NFT'lerini manipüle edebilir
+- ❌ **Örnek Saldırı:** Ben "lebron" yazıp LeBron'un profiline spam link ekleyebilirim
+- ✅ **Çözüm (FAZ 4):** Frontend'de About objesi ownership kontrolü ekle
+
+**2. About Objesi Güncellenemiyor**
+- ❌ **Sorun:** `about.move`'da sadece `create` fonksiyonu var, `update` yok
+- ❌ **Risk:** Kullanıcı bir kez profil oluşturduktan sonra bio/name değiştiremez
+- ✅ **Çözüm (FAZ 4):** Frontend'de yeni About objesi oluşturarak workaround (ya da post-hackathon kontrat update)
+
+**3. Registry'de Owner Bilgisi Yok**
+- ❌ **Sorun:** Registry sadece `username -> about_object_id` tutuyor, ama username'in kime ait olduğunu kaydetmiyor
+- ❌ **Risk:** Username çakışması durumunda ilk gelen alır, güvenlik problemi
+- ⚠️ **Durum:** Şimdilik frontend kontrolü ile hallederiz (post-hackathon Move fix gerekli)
+
+**4. Profil Çoklu Oluşturma**
+- ❌ **Sorun:** Bir cüzdan sınırsız sayıda About objesi oluşturabilir
+- ❌ **Risk:** Spam profiller, username squatting
+- ✅ **Çözüm (FAZ 4):** Frontend'de "zaten profilin var" kontrolü ekle
+
+**5. Silme Fonksiyonları Eksik**
+- ❌ **Sorun:** Link veya NFT eklendikten sonra silinemiyor (sadece `clear_all` var)
+- ❌ **UX Problemi:** Kullanıcı yanlış link eklerse tüm listeyi silip yeniden başlaması gerekir
+- ⏭️ **Durum:** Post-hackathon feature
+
+---
+
+### 🐛 KULLANICI DENEYİMİ SORUNLARI:
+
+**1. Manuel Username Input (Dashboard)**
+- ❌ **Sorun:** SocialLinksManager ve NFTGalleryManager'da kullanıcı manuel username girmek zorunda
+- ❌ **UX Problemi:** Kafa karıştırıcı ve hataya açık
+- ✅ **Çözüm (FAZ 4):** Otomatik authenticated user detection
+
+**2. CreatePage Redirect Yok**
+- ❌ **Sorun:** Kullanıcı zaten profili varsa yine de CreatePage'e gidebiliyor
+- ❌ **UX Problemi:** İkinci profil oluşturmaya çalışır, hata alır
+- ✅ **Çözüm (FAZ 4):** Akıllı redirect logic
+
+**3. DashboardPage Context Yok**
+- ❌ **Sorun:** Dashboard'da hangi profilin düzenlendiği net değil
+- ❌ **UX Problemi:** Kullanıcı username'i manuel yazarken yanlış yazabilir
+- ✅ **Çözüm (FAZ 4):** Profil bilgilerini otomatik göster
+
+**4. Hata Mesajları Eksik**
+- ❌ **Sorun:** İşlem başarısız olduğunda kullanıcı ne olduğunu anlamıyor
+- ❌ **UX Problemi:** Console'da error var ama UI'da feedback yok
+- ✅ **Çözüm (FAZ 4):** Toast notifications ve user-friendly error messages
+
+**5. Loading States Tutarsız**
+- ❌ **Sorun:** Bazı componentlerde loading var, bazılarında yok
+- ❌ **UX Problemi:** Kullanıcı işlemin devam edip etmediğini bilemiyor
+- ✅ **Çözüm (FAZ 4):** UniqueLoading component'i her yerde kullan
+
+**6. Form Validation Yok**
+- ❌ **Sorun:** Username, URL, vb. alanlarda validation yok
+- ❌ **UX Problemi:** Kullanıcı hatalı veri girdiğinde on-chain işlem fail ediyor
+- ✅ **Çözüm (FAZ 4):** Client-side validation ekle
+
+---
+
+### 🎨 ÖZELLIK EKSİKLERİ:
+
+**1. Profil Düzenleme Yok**
+- ❌ Bio, name, website değiştirilemez
+- ⏭️ Post-hackathon (Move kontrat update gerekli)
+
+**2. Link/NFT Düzenleme/Silme Yok**
+- ❌ Eklenen item'ları tek tek silemiyoruz
+- ⏭️ Post-hackathon
+
+**3. Profil Fotoğrafı Upload Sistemi Yok**
+- ❌ Şu an sadece URL girilecek
+- ⏭️ Post-hackathon (Walrus blob upload)
+
+**4. Profile Preview**
+- ❌ CreatePage'de profil oluştururken preview yok
+- ⏭️ Nice-to-have (FAZ 5'te eklenebilir)
+
+**5. Search Fonksiyonu**
+- ❌ Athlete aramak için manuel URL girişi gerekiyor
+- ⏭️ Post-hackathon
+
+**6. Donation Threshold Değiştirme**
+- ❌ DonationSettings component var ama henüz çalışmıyor
+- ⏭️ Hackathon'da eklenebilir (FAZ 4-5)
+
+---
+
+### 🔥 **FAZ 4: PLATFORM GÜVENLİĞİ & KULLANICI DENEYİMİ** (ŞİMDİ)
+**Duration:** 2.5 saat  
+**Status:** 🔄 In Progress  
+**Priority:** KRİTİK  
+
+**Çözülecek Sorunlar:**
+- ✅ Ownership Kontrolü (#1)
+- ✅ Profil Çoklu Oluşturma (#4)
+- ✅ Manuel Username Input (#1 UX)
+- ✅ CreatePage Redirect (#2 UX)
+- ✅ DashboardPage Context (#3 UX)
+- ✅ Hata Mesajları (#4 UX)
+- ✅ Loading States (#5 UX)
+- ✅ Form Validation (#6 UX)
+
+**Key Deliverables:**
+- ✅ Ownership kontrolü (frontend-based)
+  - `useProfileData` hook genişletmesi: `getUserOwnedProfile()`
+  - About objesi ownership query'si
+- ✅ CreatePage akıllı redirect
+  - Profil varsa → Dashboard
+  - Profil yoksa → Oluşturma formu
+- ✅ DashboardPage otomatik profil yükleme
+  - Manuel username input kaldır
+  - Otomatik kullanıcı profili tespit et
+- ✅ SocialLinksManager & NFTGalleryManager güvenlik
+  - Username input kaldır
+  - Otomatik authenticated user username'i kullan
+- ✅ Hata yönetimi & kullanıcı geri bildirimi
+  - Loading states (UniqueLoading component)
+  - Success notifications
+  - 404 profil bulunamadı sayfası
+
+---
+
+### ✨ **FAZ 5: SPORCU PLATFORMU KİMLİĞİ**
+**Duration:** 2 saat  
+**Status:** 📅 Next  
+**Priority:** YÜKSEK
+
+**Key Deliverables:**
+- 🎨 HomePage "Athlete-First" tasarımı
+  - Hero: "Empower Athletes. Connect Supporters. Own the Future."
+  - Sorunu ve çözümü vurgulayan alt başlık
+  - CTA: "I'm an Athlete" / "Support Athletes"
+  - Featured Athletes bölümü
+- 🏃 ProfilePage/ProfileView sporcu teması
+  - Hero banner alanı (cover photo)
+  - Sporcu istatistikleri kartı (Total Supporters, Donations)
+  - Tab reorganizasyonu (About, Links, Gallery, Support)
+  - Donation widget ön planda
+- 🎨 Visual polish
+  - Sporcu teması renk paleti
+  - Sporla ilgili ikonlar (trophy, medal)
+  - Micro-animations
+
+---
+
+### 📸 **FAZ 6: DEMO İÇERİĞİ OLUŞTURMA**
+**Duration:** 1.5 saat  
+**Status:** 📅 Planned  
+**Priority:** YÜKSEK
+
+**Key Deliverables:**
+- 3 Gerçekçi örnek sporcu profili:
+  - **Sarah Chen** - Marathon runner (Tokyo 2024 hopeful)
+  - **Alex Morgan** - E-sports Valorant pro
+  - **Jordan Rivers** - College basketball (NIL)
+- Her profil için:
+  - ✓ Detaylı bio
+  - ✓ Sosyal medya linkleri
+  - ✓ Gallery items (race photos, tournament moments)
+  - ✓ Donation threshold ayarları
+- Test donation flow
+  - DonationHistory çalışıyor mu?
+  - TopSupporters görünüyor mu?
+
+---
+
+### 🎤 **FAZ 7: SUNUM & DEMO VIDEO**
+**Duration:** 3 saat  
+**Status:** 📅 Planned  
+**Priority:** KRİTİK
+
+**7.1 Sunum Slaytları (1.5 saat)**
+- Slide 1: Problem (Athletes don't own audience)
+- Slide 2: Solution - AthliFi
+- Slide 3: Architecture (Walrus, SuiNS, Dynamic Fields)
+- Slide 4: Live Demo
+- Slide 5: Competitive Edge (NFT-gating unique)
+- Slide 6: Vision (`ideas.md` roadmap)
+- Slide 7: Tech Stack & Requirements ✅
+
+**7.2 Demo Video (3-5 dk) (1 saat)**
+- 0:00-0:30 - Landing & wallet connect
+- 0:30-1:30 - Create profile & add content
+- 1:30-2:30 - Public profile & donation flow
+- 2:30-3:30 - Walrus deployment showcase
+- 3:30-4:00 - Future vision teaser
+
+**7.3 Sunum Pratiği (30 dk)**
+- Timing: 5-7 dakika max
+- Video oynatma testi
+
+---
+
+### 🔧 **FAZ 8: BUFFER & POLİSH**
+**Duration:** 1 saat  
+**Status:** 📅 Planned  
+**Priority:** ORTA
+
+**Key Deliverables:**
+- ✓ Tüm flow'ları son test
+- ✓ README güncelle (GitHub)
+- ✓ Linter hatalarını temizle
+- ✓ Console.log temizliği
+- ✓ Final build & Walrus redeploy
+
+---
+
+## 📊 Hackathon Sprint Timeline
+
+```
+Saat 0-2.5:   FAZ 4 (Güvenlik & UX)       ████████░░
+Saat 2.5-4.5: FAZ 5 (Sporcu Kimliği)     ████████░░
+Saat 4.5-6:   FAZ 6 (Demo İçeriği)       ██████░░░░
+Saat 6-9:     FAZ 7 (Sunum & Video)      ████████████
+Saat 9-10:    FAZ 8 (Buffer & Polish)    ████░░░░░░
+```
+
+---
+
+## 🎯 **FAZ 9: NFT-GATED EXCLUSIVE CONTENT** (GELECEK)
 **Duration:** 2 hafta  
-**Status:** 🔄 Next Up  
+**Status:** 📅 Post-Hackathon  
+**Priority:** YÜKSEK
+
 **Key Deliverables:**
 - Supporter Pass NFT minting
 - Tier system (Bronze/Silver/Gold)
 - Exclusive content for NFT holders
 - Real-time ownership verification
 - Supporter dashboard
-- **🔥 Infinite NFT supply system** - NFTs can be minted indefinitely without supply limits
+- **🔥 Infinite NFT supply system**
 
 **Important Note:**
-> The NFT contract must support **unlimited/infinite minting**. Each supporter should be able to purchase an NFT from the athlete at any time without running out of supply. The contract should not have a max_supply cap, allowing athletes to continuously engage with new supporters.
+> The NFT contract must support **unlimited/infinite minting**. Each supporter should be able to purchase an NFT from the athlete at any time without running out of supply.
 
 ---
 
-### ✨ **FAZ 5: GLASS MORPHISM & ANIMATIONS**
+### ✨ **FAZ 10: GLASS MORPHISM & ANIMATIONS**
 **Duration:** 1 hafta  
 **Status:** 📅 Planned  
 **Key Deliverables:**
@@ -284,7 +518,7 @@ pnpm add framer-motion react-use-gesture
 
 ---
 
-### 🗳️ **FAZ 6: INNER CIRCLE DAO**
+### 🗳️ **FAZ 11: INNER CIRCLE DAO**
 **Duration:** 2 hafta  
 **Status:** 📅 Future  
 **Key Deliverables:**
@@ -296,7 +530,7 @@ pnpm add framer-motion react-use-gesture
 
 ---
 
-### 🚀 **FAZ 7: ADVANCED FEATURES**
+### 🚀 **FAZ 12: ADVANCED FEATURES**
 **Duration:** 4+ hafta  
 **Status:** 📅 Future
 
