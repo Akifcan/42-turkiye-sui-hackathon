@@ -1,93 +1,141 @@
-import { ConnectButton, useCurrentAccount } from "@mysten/dapp-kit";
-import { isValidSuiObjectId } from "@mysten/sui/utils";
-import { Box, Button, Container, Flex, Heading } from "@radix-ui/themes";
+import { useCurrentAccount } from "@mysten/dapp-kit";
 import { useState } from "react";
-import { Greeting } from './Greeting';
-import { CreateGreeting } from "./CreateGreeting";
-import { CreateAbout } from "./CreateAbout";
-import { AddSocialLink } from "./AddSocialLink";
-import { AddNFT } from "./AddNFT";
-import { ViewProfile } from "./ViewProfile";
+import { Header } from "./components/layout/Header";
+import { AthleteProfileForm } from "./features/athlete/AthleteProfileForm";
+import { SocialLinksManager } from "./features/athlete/SocialLinksManager";
+import { NFTGalleryManager } from "./features/athlete/NFTGalleryManager";
+import { ProfileView } from "./features/profile/ProfileView";
 
 function App() {
   const currentAccount = useCurrentAccount();
-  const [greetingId, setGreeting] = useState(() => {
-    const hash = window.location.hash.slice(1);
-    return isValidSuiObjectId(hash) ? hash : null;
-  });
+  const [activeTab, setActiveTab] = useState<'view' | 'create' | 'manage'>('view');
 
   return (
-    <>
-      <Flex
-        position="sticky"
-        px="4"
-        py="2"
-        justify="between"
-        align={"center"}
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-bg-base)' }}>
+      <Header />
+      
+      <main
         style={{
-          borderBottom: "1px solid var(--gray-a2)",
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: 'var(--spacing-xxl) var(--spacing-xl)',
         }}
       >
-        <Box>
-          <Heading>dApp Starter Template</Heading>
-        </Box>
-
-        <Box style={{ display: "flex", gap: 10, alignItems: "center" }}>
-          {currentAccount && (
-            <Button
-              variant="soft"
-              onClick={() => {
-                window.open(`https://faucet.sui.io/?address=${currentAccount.address}`, '_blank');
+        {currentAccount ? (
+          <>
+            {/* Tab Navigation */}
+            <div
+              style={{
+                display: 'flex',
+                gap: 'var(--spacing-s)',
+                marginBottom: 'var(--spacing-xxl)',
+                borderBottom: '2px solid rgba(0, 0, 0, 0.1)',
+                paddingBottom: 'var(--spacing-s)',
               }}
             >
-              Get Testnet SUI
-            </Button>
-          )}
-          <ConnectButton />
-        </Box>
-      </Flex>
-      <Container>
-        <Container
-          mt="5"
-          pt="2"
-          px="4"
-          style={{ background: "var(--gray-a2)", minHeight: 500 }}
-        >
-          {currentAccount ? (
-            <Flex direction="column" gap="6">
-              {greetingId ? (
-                <Greeting id={greetingId} />
-              ) : (
-                <CreateGreeting
-                  onCreated={(id) => {
-                    window.location.hash = id;
-                    setGreeting(id);
-                  }}
-                />
-              )}
+              <button
+                onClick={() => setActiveTab('view')}
+                style={{
+                  padding: 'var(--spacing-s) var(--spacing-l)',
+                  background: 'none',
+                  border: 'none',
+                  borderBottom: activeTab === 'view' ? '3px solid var(--color-accent-cyan)' : 'none',
+                  color: activeTab === 'view' ? 'var(--color-text-primary)' : 'rgba(0, 0, 0, 0.5)',
+                  fontWeight: activeTab === 'view' ? '700' : '400',
+                  fontSize: 'var(--font-size-l)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                View Profiles
+              </button>
+              <button
+                onClick={() => setActiveTab('create')}
+                style={{
+                  padding: 'var(--spacing-s) var(--spacing-l)',
+                  background: 'none',
+                  border: 'none',
+                  borderBottom: activeTab === 'create' ? '3px solid var(--color-accent-cyan)' : 'none',
+                  color: activeTab === 'create' ? 'var(--color-text-primary)' : 'rgba(0, 0, 0, 0.5)',
+                  fontWeight: activeTab === 'create' ? '700' : '400',
+                  fontSize: 'var(--font-size-l)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                Create Profile
+              </button>
+              <button
+                onClick={() => setActiveTab('manage')}
+                style={{
+                  padding: 'var(--spacing-s) var(--spacing-l)',
+                  background: 'none',
+                  border: 'none',
+                  borderBottom: activeTab === 'manage' ? '3px solid var(--color-accent-cyan)' : 'none',
+                  color: activeTab === 'manage' ? 'var(--color-text-primary)' : 'rgba(0, 0, 0, 0.5)',
+                  fontWeight: activeTab === 'manage' ? '700' : '400',
+                  fontSize: 'var(--font-size-l)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                Manage Content
+              </button>
+            </div>
 
-              <Box style={{ borderTop: "1px solid var(--gray-a4)", paddingTop: "2rem" }}>
-                <CreateAbout />
-              </Box>
+            {/* Tab Content */}
+            {activeTab === 'view' && (
+              <div>
+                <ProfileView />
+              </div>
+            )}
 
-              <Box style={{ borderTop: "1px solid var(--gray-a4)", paddingTop: "2rem" }}>
-                <AddSocialLink />
-              </Box>
+            {activeTab === 'create' && (
+              <div style={{ maxWidth: '600px' }}>
+                <AthleteProfileForm />
+              </div>
+            )}
 
-              <Box style={{ borderTop: "1px solid var(--gray-a4)", paddingTop: "2rem" }}>
-                <AddNFT />
-              </Box>
-
-              <Box style={{ borderTop: "1px solid var(--gray-a4)", paddingTop: "2rem" }}>
-                <ViewProfile />
-              </Box>
-            </Flex>
-          ) : (
-            <Heading>Please connect your wallet</Heading>
-          )}
-        </Container>
-      </Container>
-    </>
+            {activeTab === 'manage' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xxl)', maxWidth: '600px' }}>
+                <SocialLinksManager />
+                <NFTGalleryManager />
+              </div>
+            )}
+          </>
+        ) : (
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '60vh',
+              gap: 'var(--spacing-xl)',
+            }}
+          >
+            <h1 style={{ fontSize: '32px', fontWeight: '700', textAlign: 'center' }}>
+              Welcome to AthliFi
+            </h1>
+            <p style={{ fontSize: '18px', color: 'rgba(0, 0, 0, 0.6)', textAlign: 'center', maxWidth: '500px' }}>
+              The decentralized platform connecting athletes with their supporters. Connect your wallet to get started.
+            </p>
+            <div
+              style={{
+                padding: 'var(--spacing-xl)',
+                borderRadius: 'var(--radius-base)',
+                backgroundColor: 'rgba(7, 191, 217, 0.1)',
+                border: '2px solid var(--color-accent-cyan)',
+              }}
+            >
+              <p style={{ fontSize: 'var(--font-size-l)', color: 'var(--color-accent-cyan)', fontWeight: '600' }}>
+                👋 Please connect your wallet to continue
+              </p>
+            </div>
+          </div>
+        )}
+      </main>
+    </div>
   );
 }
 

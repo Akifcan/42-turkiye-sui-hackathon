@@ -1,0 +1,88 @@
+/* AthliFi Design System - Based on ugly-cash tokens */
+
+:root {
+  /* Colors */
+  --color-bg-base: rgb(242, 242, 242);
+  --color-text-primary: rgb(0, 0, 0);
+  --color-brand-primary: rgb(255, 255, 255);
+  --color-accent-pink: rgb(236, 15, 235);
+  --color-accent-blue: rgb(17, 40, 186);
+  --color-accent-cyan: rgb(7, 191, 217);
+  --color-accent-orange: rgb(234, 67, 29);
+  --color-accent-tan: rgb(205, 185, 174);
+  
+  /* Spacing */
+  --spacing-xs: 8px;
+  --spacing-s: 10px;
+  --spacing-m: 19px;
+  --spacing-l: 20px;
+  --spacing-xl: 24px;
+  --spacing-xxl: 34px;
+  
+  /* Typography */
+  --font-size-xs: 12px;
+  --font-size-s: 12px;
+  --font-size-m: 12px;
+  --font-size-l: 14px;
+  --font-weight-normal: 400;
+  --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  
+  /* Border Radius */
+  --radius-base: 16px;
+  
+  /* Sizing */
+  --size-xs: 23px;
+  --size-s: 111px;
+  --size-m: 197px;
+  --size-l: 304px;
+  --size-xl: 408px;
+  --size-xxl: 486px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-l);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-base);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+input, button, textarea, select {
+  font: inherit;
+}
+
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: var(--color-accent-blue);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
