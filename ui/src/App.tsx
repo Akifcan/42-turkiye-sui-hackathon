@@ -1,5 +1,5 @@
 import { useCurrentAccount } from "@mysten/dapp-kit";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "./components/layout/Header";
 import { AthleteProfileForm } from "./features/athlete/AthleteProfileForm";
 import { SocialLinksManager } from "./features/athlete/SocialLinksManager";
@@ -9,6 +9,17 @@ import { ProfileView } from "./features/profile/ProfileView";
 function App() {
   const currentAccount = useCurrentAccount();
   const [activeTab, setActiveTab] = useState<'view' | 'create' | 'manage'>('view');
+
+  // Log connected wallet address
+  useEffect(() => {
+    if (currentAccount) {
+      console.log("🔗 Wallet Connected!");
+      console.log("📍 Address:", currentAccount.address);
+      console.log("👛 Wallet:", currentAccount);
+    } else {
+      console.log("❌ No wallet connected");
+    }
+  }, [currentAccount]);
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-bg-base)' }}>
