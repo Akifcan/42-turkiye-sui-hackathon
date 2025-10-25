@@ -68,6 +68,7 @@ export function useProfileData() {
           if (
             aboutObject.data &&
             aboutObject.data.owner &&
+            typeof aboutObject.data.owner === "object" &&
             "AddressOwner" in aboutObject.data.owner
           ) {
             ownerAddress = aboutObject.data.owner.AddressOwner;

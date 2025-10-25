@@ -8,3 +8,5 @@ export const TESTNET_LIST_REGISTRY_ID =
   "0xd79195b9077bfe4eb563c38e515c81c0fb4d8ac81daf906d720dcb1f6984d15d";
 export const TESTNET_NFT_REGISTRY_ID =
   "0x39732173ecbad9ac8e4e4a1ab99072b958ac4f73fa02c83a9951a4150e1cc70d";
+
+export const SUI_DECIMALS = 9;

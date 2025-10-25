@@ -16,7 +16,6 @@ import { BrowserRouter } from "react-router-dom";
 import { registerEnokiWallets } from "@mysten/enoki";
 import App from "./App.tsx";
 import { networkConfig } from "./networkConfig.ts";
-import { EnokiFlowProvider } from "@mysten/enoki/react";
 
 const queryClient = new QueryClient();
 
