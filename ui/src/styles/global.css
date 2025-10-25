@@ -1,43 +1,7 @@
-/* AthliFi Design System - Based on ugly-cash tokens */
+/* AthliFi Design System - Based on air.inc.json tokens */
 
-:root {
-  /* Colors */
-  --color-bg-base: rgb(242, 242, 242);
-  --color-text-primary: rgb(0, 0, 0);
-  --color-brand-primary: rgb(255, 255, 255);
-  --color-accent-pink: rgb(236, 15, 235);
-  --color-accent-blue: rgb(17, 40, 186);
-  --color-accent-cyan: rgb(7, 191, 217);
-  --color-accent-orange: rgb(234, 67, 29);
-  --color-accent-tan: rgb(205, 185, 174);
-  
-  /* Spacing */
-  --spacing-xs: 8px;
-  --spacing-s: 10px;
-  --spacing-m: 19px;
-  --spacing-l: 20px;
-  --spacing-xl: 24px;
-  --spacing-xxl: 34px;
-  
-  /* Typography */
-  --font-size-xs: 12px;
-  --font-size-s: 12px;
-  --font-size-m: 12px;
-  --font-size-l: 14px;
-  --font-weight-normal: 400;
-  --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  
-  /* Border Radius */
-  --radius-base: 16px;
-  
-  /* Sizing */
-  --size-xs: 23px;
-  --size-s: 111px;
-  --size-m: 197px;
-  --size-l: 304px;
-  --size-xl: 408px;
-  --size-xxl: 486px;
-}
+/* Import design tokens */
+@import './tokens.css';
 
 * {
   box-sizing: border-box;
@@ -46,11 +10,16 @@
 }
 
 body {
-  font-family: var(--font-family-base);
-  font-size: var(--font-size-l);
-  font-weight: var(--font-weight-normal);
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
-  background-color: var(--color-bg-base);
+  background: linear-gradient(180deg, 
+    rgb(135, 206, 250) 0%, 
+    rgb(176, 224, 255) 50%, 
+    rgb(200, 235, 255) 100%
+  );
+  background-attachment: fixed;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -78,11 +47,34 @@ button {
 }
 
 a {
-  color: var(--color-accent-blue);
+  color: var(--color-brand-primary);
   text-decoration: none;
+  transition: color var(--transition-base);
 }
 
 a:hover {
+  color: var(--color-accent-3);
   text-decoration: underline;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+h1 {
+  font-size: var(--font-size-heading);
+  line-height: 1.2;
+}
+
+h2 {
+  font-size: 24px;
+  line-height: 1.3;
+}
+
+h3 {
+  font-size: 20px;
+  line-height: 1.4;
 }
 

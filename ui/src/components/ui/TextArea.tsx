@@ -11,9 +11,10 @@ export function TextArea({ label, error, style, ...props }: TextAreaProps) {
       {label && (
         <label
           style={{
-            fontSize: 'var(--font-size-l)',
-            fontWeight: '500',
+            fontSize: 'var(--font-size-small)',
+            fontWeight: 'var(--font-weight-medium)',
             color: 'var(--color-text-primary)',
+            fontFamily: 'var(--font-family-body)',
           }}
         >
           {label}
@@ -22,15 +23,15 @@ export function TextArea({ label, error, style, ...props }: TextAreaProps) {
       <textarea
         style={{
           padding: 'var(--spacing-s) var(--spacing-m)',
-          borderRadius: 'var(--radius-base)',
-          border: `1px solid ${error ? 'var(--color-accent-orange)' : 'rgba(0, 0, 0, 0.2)'}`,
-          fontSize: 'var(--font-size-l)',
-          backgroundColor: 'var(--color-brand-primary)',
+          borderRadius: 'var(--radius-s)',
+          border: `var(--border-width-none) solid ${error ? 'var(--color-error)' : 'var(--color-border)'}`,
+          fontSize: 'var(--font-size-body)',
+          backgroundColor: 'var(--color-surface)',
           color: 'var(--color-text-primary)',
           outline: 'none',
-          transition: 'border-color 0.2s ease',
+          transition: 'border-color var(--transition-base)',
           resize: 'vertical',
-          fontFamily: 'inherit',
+          fontFamily: 'var(--font-family-body)',
           ...style,
         }}
         {...props}
@@ -38,8 +39,9 @@ export function TextArea({ label, error, style, ...props }: TextAreaProps) {
       {error && (
         <span
           style={{
-            fontSize: 'var(--font-size-s)',
-            color: 'var(--color-accent-orange)',
+            fontSize: 'var(--font-size-small)',
+            color: 'var(--color-error)',
+            fontFamily: 'var(--font-family-body)',
           }}
         >
           {error}

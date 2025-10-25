@@ -1,14 +1,17 @@
 import { useCurrentAccount } from "@mysten/dapp-kit";
 import { useState, useEffect } from "react";
 import { Header } from "./components/layout/Header";
+import { Button } from "./components/ui/Button";
 import { AthleteProfileForm } from "./features/athlete/AthleteProfileForm";
 import { SocialLinksManager } from "./features/athlete/SocialLinksManager";
 import { NFTGalleryManager } from "./features/athlete/NFTGalleryManager";
 import { ProfileView } from "./features/profile/ProfileView";
+import { useProfileData } from './hooks/useProfileData';
 
 function App() {
   const currentAccount = useCurrentAccount();
   const [activeTab, setActiveTab] = useState<'view' | 'create' | 'manage'>('view');
+  const { profileData } = useProfileData();
 
   // Log connected wallet address
   useEffect(() => {
@@ -22,93 +25,72 @@ function App() {
   }, [currentAccount]);
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-bg-base)' }}>
+    <div style={{ minHeight: '100vh', position: 'relative' }}>
       <Header />
       
       <main
         style={{
-          maxWidth: '1200px',
+          maxWidth: '800px',
           margin: '0 auto',
           padding: 'var(--spacing-xxl) var(--spacing-xl)',
+          position: 'relative',
+          zIndex: 1,
         }}
       >
         {currentAccount ? (
           <>
             {/* Tab Navigation */}
-            <div
-              style={{
-                display: 'flex',
-                gap: 'var(--spacing-s)',
-                marginBottom: 'var(--spacing-xxl)',
-                borderBottom: '2px solid rgba(0, 0, 0, 0.1)',
-                paddingBottom: 'var(--spacing-s)',
-              }}
-            >
-              <button
-                onClick={() => setActiveTab('view')}
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 'var(--spacing-xxl)' }}>
+              <div
                 style={{
-                  padding: 'var(--spacing-s) var(--spacing-l)',
-                  background: 'none',
-                  border: 'none',
-                  borderBottom: activeTab === 'view' ? '3px solid var(--color-accent-cyan)' : 'none',
-                  color: activeTab === 'view' ? 'var(--color-text-primary)' : 'rgba(0, 0, 0, 0.5)',
-                  fontWeight: activeTab === 'view' ? '700' : '400',
-                  fontSize: 'var(--font-size-l)',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
+                  display: 'inline-flex',
+                  padding: 'var(--spacing-xs)',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  borderRadius: 'var(--radius-l)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(10px)',
+                  gap: 'var(--spacing-xs)',
                 }}
               >
-                View Profiles
-              </button>
-              <button
-                onClick={() => setActiveTab('create')}
-                style={{
-                  padding: 'var(--spacing-s) var(--spacing-l)',
-                  background: 'none',
-                  border: 'none',
-                  borderBottom: activeTab === 'create' ? '3px solid var(--color-accent-cyan)' : 'none',
-                  color: activeTab === 'create' ? 'var(--color-text-primary)' : 'rgba(0, 0, 0, 0.5)',
-                  fontWeight: activeTab === 'create' ? '700' : '400',
-                  fontSize: 'var(--font-size-l)',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                }}
-              >
-                Create Profile
-              </button>
-              <button
-                onClick={() => setActiveTab('manage')}
-                style={{
-                  padding: 'var(--spacing-s) var(--spacing-l)',
-                  background: 'none',
-                  border: 'none',
-                  borderBottom: activeTab === 'manage' ? '3px solid var(--color-accent-cyan)' : 'none',
-                  color: activeTab === 'manage' ? 'var(--color-text-primary)' : 'rgba(0, 0, 0, 0.5)',
-                  fontWeight: activeTab === 'manage' ? '700' : '400',
-                  fontSize: 'var(--font-size-l)',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                }}
-              >
-                Manage Content
-              </button>
+                <Button
+                  variant="tab"
+                  active={activeTab === 'view'}
+                  onClick={() => setActiveTab('view')}
+                >
+                  View Profiles
+                </Button>
+                <Button
+                  variant="tab"
+                  active={activeTab === 'create'}
+                  onClick={() => setActiveTab('create')}
+                >
+                  Create Profile
+                </Button>
+                <Button
+                  variant="tab"
+                  active={activeTab === 'manage'}
+                  onClick={() => setActiveTab('manage')}
+                >
+                  Manage Content
+                </Button>
+              </div>
             </div>
 
             {/* Tab Content */}
             {activeTab === 'view' && (
               <div>
-                <ProfileView />
+                <ProfileView profileData={profileData} />
               </div>
             )}
 
             {activeTab === 'create' && (
-              <div style={{ maxWidth: '600px' }}>
+              <div>
                 <AthleteProfileForm />
               </div>
             )}
 
             {activeTab === 'manage' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xxl)', maxWidth: '600px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xxl)' }}>
                 <SocialLinksManager />
                 <NFTGalleryManager />
               </div>
@@ -125,21 +107,39 @@ function App() {
               gap: 'var(--spacing-xl)',
             }}
           >
-            <h1 style={{ fontSize: '32px', fontWeight: '700', textAlign: 'center' }}>
+            <h1 style={{ 
+              fontSize: 'var(--font-size-heading)', 
+              fontWeight: 'var(--font-weight-bold)', 
+              fontFamily: 'var(--font-family-heading)',
+              textAlign: 'center',
+              color: 'var(--color-text-primary)',
+            }}>
               Welcome to AthliFi
             </h1>
-            <p style={{ fontSize: '18px', color: 'rgba(0, 0, 0, 0.6)', textAlign: 'center', maxWidth: '500px' }}>
+            <p style={{ 
+              fontSize: '18px', 
+              color: 'var(--color-text-secondary)', 
+              textAlign: 'center', 
+              maxWidth: '500px',
+              fontFamily: 'var(--font-family-body)',
+              lineHeight: '1.6',
+            }}>
               The decentralized platform connecting athletes with their supporters. Connect your wallet to get started.
             </p>
             <div
               style={{
                 padding: 'var(--spacing-xl)',
-                borderRadius: 'var(--radius-base)',
-                backgroundColor: 'rgba(7, 191, 217, 0.1)',
-                border: '2px solid var(--color-accent-cyan)',
+                borderRadius: 'var(--radius-m)',
+                backgroundColor: 'rgba(16, 149, 236, 0.15)',
+                border: 'var(--border-width-xs) solid var(--color-brand-primary)',
               }}
             >
-              <p style={{ fontSize: 'var(--font-size-l)', color: 'var(--color-accent-cyan)', fontWeight: '600' }}>
+              <p style={{ 
+                fontSize: 'var(--font-size-body)', 
+                color: 'var(--color-brand-primary)', 
+                fontWeight: 'var(--font-weight-medium)',
+                fontFamily: 'var(--font-family-body)',
+              }}>
                 👋 Please connect your wallet to continue
               </p>
             </div>

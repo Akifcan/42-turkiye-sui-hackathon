@@ -2,7 +2,7 @@ import { Transaction } from "@mysten/sui/transactions";
 import { useSuiClient } from "@mysten/dapp-kit";
 import { useNetworkVariable } from "../../networkConfig";
 import { useState } from "react";
-import { useEnokiSponsoredTransaction } from "../../useEnokiSponsoredTransaction";
+import { useEnokiSponsoredTransaction } from "../../hooks/useEnokiSponsoredTransaction";
 import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
@@ -96,10 +96,20 @@ export function AthleteProfileForm() {
     <Card>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xl)' }}>
         <div>
-          <h2 style={{ fontSize: '20px', fontWeight: '700', marginBottom: 'var(--spacing-xs)' }}>
+          <h2 style={{ 
+            fontSize: '24px', 
+            fontWeight: 'var(--font-weight-bold)', 
+            fontFamily: 'var(--font-family-heading)',
+            marginBottom: 'var(--spacing-xs)',
+            color: 'var(--color-text-primary)',
+          }}>
             Create Your Athlete Profile
           </h2>
-          <p style={{ fontSize: 'var(--font-size-l)', color: 'rgba(0, 0, 0, 0.6)' }}>
+          <p style={{ 
+            fontSize: 'var(--font-size-body)', 
+            color: 'var(--color-text-secondary)',
+            fontFamily: 'var(--font-family-body)',
+          }}>
             Set up your AthliFi profile to connect with your supporters
           </p>
         </div>
@@ -108,12 +118,16 @@ export function AthleteProfileForm() {
           <div
             style={{
               padding: 'var(--spacing-m)',
-              borderRadius: 'var(--radius-base)',
-              backgroundColor: 'rgba(7, 191, 217, 0.1)',
-              border: '1px solid var(--color-accent-cyan)',
+              borderRadius: 'var(--radius-m)',
+              backgroundColor: 'rgba(16, 149, 236, 0.15)',
+              border: 'var(--border-width-none) solid var(--color-brand-primary)',
             }}
           >
-            <p style={{ color: 'var(--color-accent-cyan)', fontWeight: '600' }}>
+            <p style={{ 
+              color: 'var(--color-brand-primary)', 
+              fontWeight: 'var(--font-weight-medium)',
+              fontFamily: 'var(--font-family-body)',
+            }}>
               ✓ Profile created successfully! Your URL: athlifi.com/{formData.username || 'your-username'}
             </p>
           </div>
@@ -129,7 +143,12 @@ export function AthleteProfileForm() {
           disabled={waitingForTxn}
         />
         {formData.username && (
-          <p style={{ fontSize: 'var(--font-size-s)', color: 'var(--color-accent-cyan)', marginTop: '-12px' }}>
+          <p style={{ 
+            fontSize: 'var(--font-size-small)', 
+            color: 'var(--color-brand-primary)', 
+            marginTop: '-12px',
+            fontFamily: 'var(--font-family-body)',
+          }}>
             Your URL: athlifi.com/{formData.username}
           </p>
         )}

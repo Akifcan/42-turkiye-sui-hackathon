@@ -27,10 +27,20 @@ export function ProfileView() {
       <Card>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-m)' }}>
           <div>
-            <h2 style={{ fontSize: '20px', fontWeight: '700', marginBottom: 'var(--spacing-xs)' }}>
+            <h2 style={{ 
+              fontSize: '24px', 
+              fontWeight: 'var(--font-weight-bold)', 
+              fontFamily: 'var(--font-family-heading)',
+              marginBottom: 'var(--spacing-xs)',
+              color: 'var(--color-text-primary)',
+            }}>
               View Athlete Profile
             </h2>
-            <p style={{ fontSize: 'var(--font-size-l)', color: 'rgba(0, 0, 0, 0.6)' }}>
+            <p style={{ 
+              fontSize: 'var(--font-size-body)', 
+              color: 'var(--color-text-secondary)',
+              fontFamily: 'var(--font-family-body)',
+            }}>
               Enter an athlete's username to view their profile
             </p>
           </div>
@@ -58,12 +68,16 @@ export function ProfileView() {
             <div
               style={{
                 padding: 'var(--spacing-m)',
-                borderRadius: 'var(--radius-base)',
-                backgroundColor: 'rgba(234, 67, 29, 0.1)',
-                border: '1px solid var(--color-accent-orange)',
+                borderRadius: 'var(--radius-m)',
+                backgroundColor: 'rgba(236, 15, 235, 0.1)',
+                border: 'var(--border-width-none) solid var(--color-error)',
               }}
             >
-              <p style={{ color: 'var(--color-accent-orange)', fontSize: 'var(--font-size-l)' }}>
+              <p style={{ 
+                color: 'var(--color-error)', 
+                fontSize: 'var(--font-size-body)',
+                fontFamily: 'var(--font-family-body)',
+              }}>
                 ⚠️ Please connect your wallet to view profiles
               </p>
             </div>
@@ -73,12 +87,16 @@ export function ProfileView() {
             <div
               style={{
                 padding: 'var(--spacing-m)',
-                borderRadius: 'var(--radius-base)',
-                backgroundColor: 'rgba(234, 67, 29, 0.1)',
-                border: '1px solid var(--color-accent-orange)',
+                borderRadius: 'var(--radius-m)',
+                backgroundColor: 'rgba(236, 15, 235, 0.1)',
+                border: 'var(--border-width-none) solid var(--color-error)',
               }}
             >
-              <p style={{ color: 'var(--color-accent-orange)', fontSize: 'var(--font-size-l)' }}>
+              <p style={{ 
+                color: 'var(--color-error)', 
+                fontSize: 'var(--font-size-body)',
+                fontFamily: 'var(--font-family-body)',
+              }}>
                 ❌ {error}
               </p>
             </div>
@@ -92,20 +110,35 @@ export function ProfileView() {
           {profileData.profile && (
             <Card>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-m)' }}>
-                <h2 style={{ fontSize: '24px', fontWeight: '700', color: 'var(--color-text-primary)' }}>
+                <h2 style={{ 
+                  fontSize: '28px', 
+                  fontWeight: 'var(--font-weight-bold)', 
+                  fontFamily: 'var(--font-family-heading)',
+                  color: 'var(--color-text-primary)',
+                }}>
                   {profileData.profile.name} {profileData.profile.lastname}
                 </h2>
 
                 {profileData.profile.website && (
                   <div>
-                    <p style={{ fontSize: 'var(--font-size-s)', fontWeight: '600', color: 'rgba(0, 0, 0, 0.6)', marginBottom: '4px' }}>
+                    <p style={{ 
+                      fontSize: 'var(--font-size-small)', 
+                      fontWeight: 'var(--font-weight-medium)', 
+                      color: 'var(--color-text-secondary)', 
+                      marginBottom: '4px',
+                      fontFamily: 'var(--font-family-body)',
+                    }}>
                       Website
                     </p>
                     <a
                       href={profileData.profile.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      style={{ color: 'var(--color-accent-blue)', fontSize: 'var(--font-size-l)' }}
+                      style={{ 
+                        color: 'var(--color-brand-primary)', 
+                        fontSize: 'var(--font-size-body)',
+                        fontFamily: 'var(--font-family-body)',
+                      }}
                     >
                       {profileData.profile.website}
                     </a>
@@ -114,16 +147,31 @@ export function ProfileView() {
 
                 {profileData.profile.about && (
                   <div>
-                    <p style={{ fontSize: 'var(--font-size-s)', fontWeight: '600', color: 'rgba(0, 0, 0, 0.6)', marginBottom: '4px' }}>
+                    <p style={{ 
+                      fontSize: 'var(--font-size-small)', 
+                      fontWeight: 'var(--font-weight-medium)', 
+                      color: 'var(--color-text-secondary)', 
+                      marginBottom: '4px',
+                      fontFamily: 'var(--font-family-body)',
+                    }}>
                       About
                     </p>
-                    <p style={{ fontSize: 'var(--font-size-l)', lineHeight: '1.6' }}>
+                    <p style={{ 
+                      fontSize: 'var(--font-size-body)', 
+                      lineHeight: '1.6',
+                      color: 'var(--color-text-primary)',
+                      fontFamily: 'var(--font-family-body)',
+                    }}>
                       {profileData.profile.about}
                     </p>
                   </div>
                 )}
 
-                <p style={{ fontSize: 'var(--font-size-s)', color: 'rgba(0, 0, 0, 0.5)' }}>
+                <p style={{ 
+                  fontSize: 'var(--font-size-small)', 
+                  color: 'var(--color-text-muted)',
+                  fontFamily: 'var(--font-family-body)',
+                }}>
                   🔗 athlifi.com/{username}
                 </p>
               </div>
@@ -133,7 +181,12 @@ export function ProfileView() {
           {/* Social Links Section */}
           {profileData.links.length > 0 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-m)' }}>
-              <h3 style={{ fontSize: '18px', fontWeight: '700' }}>
+              <h3 style={{ 
+                fontSize: '20px', 
+                fontWeight: 'var(--font-weight-bold)',
+                fontFamily: 'var(--font-family-heading)',
+                color: 'var(--color-text-primary)',
+              }}>
                 Social Links ({profileData.links.length})
               </h3>
               
@@ -156,9 +209,18 @@ export function ProfileView() {
                       />
                     )}
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xs)' }}>
-                      <h4 style={{ fontSize: '16px', fontWeight: '600' }}>{link.sitename}</h4>
+                      <h4 style={{ 
+                        fontSize: '18px', 
+                        fontWeight: 'var(--font-weight-medium)',
+                        fontFamily: 'var(--font-family-body)',
+                        color: 'var(--color-text-primary)',
+                      }}>{link.sitename}</h4>
                       {link.description && (
-                        <p style={{ fontSize: 'var(--font-size-l)', color: 'rgba(0, 0, 0, 0.6)' }}>
+                        <p style={{ 
+                          fontSize: 'var(--font-size-body)', 
+                          color: 'var(--color-text-secondary)',
+                          fontFamily: 'var(--font-family-body)',
+                        }}>
                           {link.description}
                         </p>
                       )}
@@ -166,7 +228,11 @@ export function ProfileView() {
                         href={link.siteurl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        style={{ color: 'var(--color-accent-blue)', fontSize: 'var(--font-size-l)' }}
+                        style={{ 
+                          color: 'var(--color-brand-primary)', 
+                          fontSize: 'var(--font-size-body)',
+                          fontFamily: 'var(--font-family-body)',
+                        }}
                       >
                         {link.siteurl} →
                       </a>
@@ -180,7 +246,12 @@ export function ProfileView() {
           {/* NFT Gallery Section */}
           {profileData.nfts.length > 0 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-m)' }}>
-              <h3 style={{ fontSize: '18px', fontWeight: '700' }}>
+              <h3 style={{ 
+                fontSize: '20px', 
+                fontWeight: 'var(--font-weight-bold)',
+                fontFamily: 'var(--font-family-heading)',
+                color: 'var(--color-text-primary)',
+              }}>
                 NFT Collection ({profileData.nfts.length})
               </h3>
               
@@ -199,8 +270,8 @@ export function ProfileView() {
                           style={{
                             width: '100%',
                             height: '200px',
-                            backgroundColor: 'var(--color-bg-base)',
-                            borderRadius: 'var(--radius-base)',
+                            backgroundColor: 'var(--color-background-base)',
+                            borderRadius: 'var(--radius-m)',
                             overflow: 'hidden',
                           }}
                         >
@@ -219,10 +290,19 @@ export function ProfileView() {
                         </div>
                       )}
                       
-                      <h4 style={{ fontSize: '16px', fontWeight: '600' }}>{nft.title}</h4>
+                      <h4 style={{ 
+                        fontSize: '18px', 
+                        fontWeight: 'var(--font-weight-medium)',
+                        fontFamily: 'var(--font-family-body)',
+                        color: 'var(--color-text-primary)',
+                      }}>{nft.title}</h4>
                       
                       {nft.description && (
-                        <p style={{ fontSize: 'var(--font-size-l)', color: 'rgba(0, 0, 0, 0.6)' }}>
+                        <p style={{ 
+                          fontSize: 'var(--font-size-body)', 
+                          color: 'var(--color-text-secondary)',
+                          fontFamily: 'var(--font-family-body)',
+                        }}>
                           {nft.description}
                         </p>
                       )}
@@ -235,7 +315,11 @@ export function ProfileView() {
 
           {!profileData.profile && profileData.links.length === 0 && profileData.nfts.length === 0 && (
             <Card>
-              <p style={{ textAlign: 'center', color: 'rgba(0, 0, 0, 0.6)' }}>
+              <p style={{ 
+                textAlign: 'center', 
+                color: 'var(--color-text-secondary)',
+                fontFamily: 'var(--font-family-body)',
+              }}>
                 No profile data found for this username
               </p>
             </Card>

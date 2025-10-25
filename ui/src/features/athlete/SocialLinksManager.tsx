@@ -2,7 +2,7 @@ import { Transaction } from "@mysten/sui/transactions";
 import { useSuiClient } from "@mysten/dapp-kit";
 import { useNetworkVariable } from "../../networkConfig";
 import { useState } from "react";
-import { useEnokiSponsoredTransaction } from "../../useEnokiSponsoredTransaction";
+import { useEnokiSponsoredTransaction } from "../../hooks/useEnokiSponsoredTransaction";
 import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
@@ -73,10 +73,20 @@ export function SocialLinksManager() {
     <Card>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-m)' }}>
         <div>
-          <h2 style={{ fontSize: '20px', fontWeight: '700', marginBottom: 'var(--spacing-xs)' }}>
+          <h2 style={{ 
+            fontSize: '24px', 
+            fontWeight: 'var(--font-weight-bold)', 
+            fontFamily: 'var(--font-family-heading)',
+            marginBottom: 'var(--spacing-xs)',
+            color: 'var(--color-text-primary)',
+          }}>
             Add Social Link
           </h2>
-          <p style={{ fontSize: 'var(--font-size-l)', color: 'rgba(0, 0, 0, 0.6)' }}>
+          <p style={{ 
+            fontSize: 'var(--font-size-body)', 
+            color: 'var(--color-text-secondary)',
+            fontFamily: 'var(--font-family-body)',
+          }}>
             Add social media links to your athlete profile
           </p>
         </div>
@@ -85,12 +95,16 @@ export function SocialLinksManager() {
           <div
             style={{
               padding: 'var(--spacing-m)',
-              borderRadius: 'var(--radius-base)',
-              backgroundColor: 'rgba(7, 191, 217, 0.1)',
-              border: '1px solid var(--color-accent-cyan)',
+              borderRadius: 'var(--radius-m)',
+              backgroundColor: 'rgba(16, 149, 236, 0.15)',
+              border: 'var(--border-width-none) solid var(--color-brand-primary)',
             }}
           >
-            <p style={{ color: 'var(--color-accent-cyan)', fontWeight: '600' }}>
+            <p style={{ 
+              color: 'var(--color-brand-primary)', 
+              fontWeight: 'var(--font-weight-medium)',
+              fontFamily: 'var(--font-family-body)',
+            }}>
               ✓ Social link added successfully!
             </p>
           </div>
