@@ -47,19 +47,7 @@ export function CreateGreeting({
 
   return (
     <Container>
-      <Button
-        size="3"
-        onClick={() => {
-          create();
-        }}
-        disabled={waitingForTxn}
-      >
-        {waitingForTxn? (
-          <ClipLoader size={20} />
-        ) : (
-          "Create Greeting"
-        )}
-      </Button>
+     
     </Container>
   );
 }
