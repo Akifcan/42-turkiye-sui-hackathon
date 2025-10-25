@@ -1,9 +1,9 @@
 import { Transaction } from "@mysten/sui/transactions";
-import { useCurrentAccount, useSuiClient, useSignAndExecuteTransaction } from "@mysten/dapp-kit";
+import { useCurrentAccount, useSuiClient, useSignTransaction } from "@mysten/dapp-kit";
 import { useState } from "react";
 
 const BACKEND_API_URL = 'http://localhost:3001';
-const USE_SPONSORED_TRANSACTIONS = false; // Set to true when allow-list is configured
+const USE_SPONSORED_TRANSACTIONS = true; // ⚠️ Enoki allow-list manual approval gerektirir (1-7 gün)
 
 /**
  * Hook for executing Enoki sponsored transactions
@@ -15,7 +15,7 @@ const USE_SPONSORED_TRANSACTIONS = false; // Set to true when allow-list is conf
  * Visit https://portal.enoki.mystenlabs.com/ to configure allow-list
  */
 export function useEnokiSponsoredTransaction() {
-  const { mutate: signAndExecute } = useSignAndExecuteTransaction();
+  const { mutateAsync: signTransaction } = useSignTransaction();
   const currentAccount = useCurrentAccount();
   const suiClient = useSuiClient();
   const [isExecuting, setIsExecuting] = useState(false);
@@ -40,24 +40,25 @@ export function useEnokiSponsoredTransaction() {
       console.log('💳 Using regular transaction (sponsored transactions disabled)');
       console.log('ℹ️ To enable sponsored transactions, add your contract methods to Enoki allow-list');
       
-      signAndExecute(
-        { transaction },
-        {
-          onSuccess: (result) => {
-            console.log('✅ Transaction executed successfully!');
-            console.log('Transaction digest:', result.digest);
-            if (options?.onSuccess) {
-              options.onSuccess(result);
-            }
-          },
-          onError: (error) => {
-            console.error('❌ Transaction failed:', error);
-            if (options?.onError) {
-              options.onError(error);
-            }
-          },
+      try {
+        const signature = await signTransaction({ transaction });
+        const result = await suiClient.executeTransactionBlock({
+          transactionBlock: await transaction.build({ client: suiClient }),
+          signature: signature.signature,
+        });
+        
+        console.log('✅ Transaction executed successfully!');
+        console.log('Transaction digest:', result.digest);
+        
+        if (options?.onSuccess) {
+          options.onSuccess(result);
         }
-      );
+      } catch (error) {
+        console.error('❌ Transaction failed:', error);
+        if (options?.onError) {
+          options.onError(error);
+        }
+      }
       return;
     }
 
@@ -130,35 +131,41 @@ export function useEnokiSponsoredTransaction() {
       const sponsorData = await sponsorResponse.json();
       console.log('✅ Step 2 Complete: Transaction sponsored');
       console.log('Transaction Digest:', sponsorData.digest);
+      console.log('Sponsor Data:', sponsorData);
 
-      // Step 3: Sign the transaction bytes
-      console.log('📝 Step 3: Signing transaction...');
-      // Convert base64 to Uint8Array
-      const bytesToSign = Uint8Array.from(atob(sponsorData.bytes), c => c.charCodeAt(0));
+      // Step 3: Sign the transaction bytes returned from Enoki
+      console.log('📝 Step 3: Signing transaction bytes with user wallet...');
       
-      // Use wallet to sign the bytes
-      const signature = await (currentAccount as any).signTransactionBlock?.({
-        transactionBlock: bytesToSign,
-      });
-
-      if (!signature) {
-        throw new Error('Failed to sign transaction');
-      }
-
-      console.log('✅ Step 3 Complete: Transaction signed');
-
-      // Step 4: Execute sponsored transaction
-      console.log('📝 Step 4: Executing sponsored transaction...');
+      // Build transaction from the bytes Enoki gave us
+      const txBytes = Uint8Array.from(atob(sponsorData.bytes), c => c.charCodeAt(0));
+      const txToSign = Transaction.from(txBytes);
+      
+      console.log('Transaction bytes length:', txBytes.length);
+      console.log('Requesting user signature from wallet...');
+      
+      // Sign the transaction (ONLY sign, don't execute)
+      const signatureResult = await signTransaction({ transaction: txToSign });
+      console.log('✅ User signature obtained!');
+      console.log('Signature:', signatureResult.signature.substring(0, 50) + '...');
+      
+      // Step 4: Send signature to backend for final sponsorship execution
+      console.log('📝 Step 4: Sending signature to backend for sponsor execution...');
+      
       const executePayload: any = {
         digest: sponsorData.digest,
-        signature: signature,
+        signature: signatureResult.signature,
       };
-
-      // Only add zkLoginJwt if it exists
-      if (zkLoginJwt) {
-        executePayload.zkLoginJwt = zkLoginJwt;
+      
+      // Add zkLogin JWT if available (check again for Step 4)
+      const zkLoginJwtForExecute = 
+        (currentAccount as any).zkLoginJwt || 
+        (currentAccount as any).jwt ||
+        undefined;
+        
+      if (zkLoginJwtForExecute) {
+        executePayload.zkLoginJwt = zkLoginJwtForExecute;
       }
-
+      
       const executeResponse = await fetch(`${BACKEND_API_URL}/api/execute-sponsored-transaction`, {
         method: 'POST',
         headers: {
@@ -169,13 +176,14 @@ export function useEnokiSponsoredTransaction() {
 
       if (!executeResponse.ok) {
         const errorData = await executeResponse.json();
+        console.error('❌ Execute sponsored transaction failed:', errorData);
         throw new Error(errorData.error || 'Failed to execute sponsored transaction');
       }
 
       const executeData = await executeResponse.json();
-      console.log('✅ Step 4 Complete: Transaction executed successfully!');
-      console.log('💰 Gas fees sponsored by Enoki');
-      console.log('Final Digest:', executeData.digest);
+      console.log('✅ Step 4 Complete: Sponsored transaction executed!');
+      console.log('💰 Gas fees SPONSORED by Enoki!');
+      console.log('Transaction digest:', executeData.digest);
 
       setIsExecuting(false);
 

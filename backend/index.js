@@ -87,23 +87,50 @@ app.post('/api/sponsor-transaction', async (req, res) => {
     if (!sponsorResponse.ok) {
       const errorText = await sponsorResponse.text();
       console.error('❌ Enoki sponsor request failed:', errorText);
+      console.error('Status:', sponsorResponse.status);
+      
+      // Try to parse error as JSON
+      let errorDetails = errorText;
+      try {
+        const errorJson = JSON.parse(errorText);
+        console.error('Error details:', errorJson);
+        errorDetails = JSON.stringify(errorJson);
+      } catch (e) {
+        // Not JSON, keep as text
+      }
+      
       return res.status(sponsorResponse.status).json({
         error: 'Failed to sponsor transaction',
-        details: errorText,
+        details: errorDetails,
       });
     }
 
     const sponsorData = await sponsorResponse.json();
     console.log('✅ Step 1 Complete: Transaction sponsored');
-    console.log('Transaction Digest:', sponsorData.digest);
+    console.log('Full Enoki Response:', JSON.stringify(sponsorData, null, 2));
+    
+    // Enoki returns data in a "data" field
+    const data = sponsorData.data || sponsorData;
+    
+    console.log('---');
+    console.log('Digest:', data.digest);
+    console.log('Bytes:', data.bytes ? 'EXISTS (length: ' + data.bytes.length + ')' : 'MISSING');
+
+    if (!data.digest || !data.bytes) {
+      console.error('❌ Missing required fields in Enoki response');
+      return res.status(500).json({
+        error: 'Invalid response from Enoki',
+        details: 'Missing digest or bytes in response',
+      });
+    }
 
     // Step 2: User signs the transaction (this happens on frontend)
     // We return the bytes that need to be signed
     
     res.json({
       success: true,
-      digest: sponsorData.digest,
-      bytes: sponsorData.bytes,
+      digest: data.digest,
+      bytes: data.bytes,
       message: 'Transaction sponsored. Please sign the transaction bytes on the frontend.',
     });
 
@@ -171,11 +198,15 @@ app.post('/api/execute-sponsored-transaction', async (req, res) => {
 
     const executeData = await executeResponse.json();
     console.log('✅ Step 2 Complete: Transaction executed');
-    console.log('Sponsored Transaction:', executeData);
+    console.log('Full Execute Response:', JSON.stringify(executeData, null, 2));
+    
+    // Enoki returns data in a "data" field
+    const data = executeData.data || executeData;
 
     res.json({
       success: true,
-      ...executeData,
+      digest: data.digest,
+      ...data,
     });
 
   } catch (error) {
