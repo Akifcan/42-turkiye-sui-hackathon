@@ -1,9 +1,8 @@
 import { Transaction } from "@mysten/sui/transactions";
-import { Button, Container } from "@radix-ui/themes";
+import { Container } from "@radix-ui/themes";
 import { useSignAndExecuteTransaction, useSuiClient } from "@mysten/dapp-kit";
 import { useNetworkVariable } from "./networkConfig";
 import { useState } from "react";
-import { ClipLoader } from "react-spinners";
 
 export function CreateGreeting({
   onCreated,
@@ -14,9 +13,10 @@ export function CreateGreeting({
   const suiClient = useSuiClient();
   const { mutate: signAndExecute } = useSignAndExecuteTransaction();	
 
-  const [waitingForTxn, setWaitingForTxn] = useState(false);
+  const [_waitingForTxn, setWaitingForTxn] = useState(false);
 
-  const create = () => {
+  // @ts-ignore - Legacy demo function not used in new architecture
+  const _create = () => {
 
     setWaitingForTxn(true);
 
