@@ -1,7 +1,7 @@
 import { ConnectButton, useCurrentAccount } from "@mysten/dapp-kit";
 import { isValidSuiObjectId } from "@mysten/sui/utils";
 import { Box, Button, Container, Flex, Heading } from "@radix-ui/themes";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Greeting } from './Greeting';
 import { CreateGreeting } from "./CreateGreeting";
 import { CreateAbout } from "./CreateAbout";
@@ -15,6 +15,17 @@ function App() {
     const hash = window.location.hash.slice(1);
     return isValidSuiObjectId(hash) ? hash : null;
   });
+
+  // Log connected wallet address
+  useEffect(() => {
+    if (currentAccount) {
+      console.log("🔗 Wallet Connected!");
+      console.log("📍 Address:", currentAccount.address);
+      console.log("👛 Wallet:", currentAccount);
+    } else {
+      console.log("❌ No wallet connected");
+    }
+  }, [currentAccount]);
 
   return (
     <>
