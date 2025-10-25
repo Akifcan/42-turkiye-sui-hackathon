@@ -1,15 +1,16 @@
 import { Transaction } from "@mysten/sui/transactions";
 import { Button, Container, TextField, Flex, Text, TextArea } from "@radix-ui/themes";
-import { useSignAndExecuteTransaction, useSuiClient } from "@mysten/dapp-kit";
+import { useSuiClient } from "@mysten/dapp-kit";
 import { useNetworkVariable } from "./networkConfig";
 import { useState } from "react";
 import { ClipLoader } from "react-spinners";
+import { useEnokiSponsoredTransaction } from "./useEnokiSponsoredTransaction";
 
 export function AddSocialLink() {
   const suilinkPackageId = useNetworkVariable("suilinkPackageId");
   const listRegistryId = useNetworkVariable("listRegistryId");
   const suiClient = useSuiClient();
-  const { mutate: signAndExecute } = useSignAndExecuteTransaction();
+  const { executeSponsoredTransaction } = useEnokiSponsoredTransaction();
 
   const [waitingForTxn, setWaitingForTxn] = useState(false);
   const [formData, setFormData] = useState({
@@ -37,38 +38,33 @@ export function AddSocialLink() {
       target: `${suilinkPackageId}::list::add_link`,
     });
 
-    signAndExecute(
-      {
-        transaction: tx,
-      },
-      {
-        onSuccess: (tx) => {
-          suiClient
-            .waitForTransaction({ digest: tx.digest, options: { showEffects: true } })
-            .then(() => {
-              console.log("✅ Social link added successfully!");
-              console.log("Username:", formData.username);
-              console.log("Site:", formData.sitename);
-              console.log("URL:", formData.siteurl);
+    executeSponsoredTransaction(tx, {
+      onSuccess: (tx) => {
+        suiClient
+          .waitForTransaction({ digest: tx.digest, options: { showEffects: true } })
+          .then(() => {
+            console.log("✅ Social link added successfully!");
+            console.log("Username:", formData.username);
+            console.log("Site:", formData.sitename);
+            console.log("URL:", formData.siteurl);
 
-              setWaitingForTxn(false);
+            setWaitingForTxn(false);
 
-              // Reset form (keep username)
-              setFormData({
-                username: formData.username,
-                sitename: "",
-                siteurl: "",
-                description: "",
-                iconurl: "",
-              });
+            // Reset form (keep username)
+            setFormData({
+              username: formData.username,
+              sitename: "",
+              siteurl: "",
+              description: "",
+              iconurl: "",
             });
-        },
-        onError: (error) => {
-          console.error("❌ Failed to add link:", error);
-          setWaitingForTxn(false);
-        },
+          });
       },
-    );
+      onError: (error) => {
+        console.error("❌ Failed to add link:", error);
+        setWaitingForTxn(false);
+      },
+    });
   };
 
   return (

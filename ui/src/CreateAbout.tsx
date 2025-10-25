@@ -1,9 +1,10 @@
 import { Transaction } from "@mysten/sui/transactions";
 import { Button, Container, TextField, TextArea, Flex, Text } from "@radix-ui/themes";
-import { useSignAndExecuteTransaction, useSuiClient } from "@mysten/dapp-kit";
+import { useSuiClient } from "@mysten/dapp-kit";
 import { useNetworkVariable } from "./networkConfig";
 import { useState } from "react";
 import { ClipLoader } from "react-spinners";
+import { useEnokiSponsoredTransaction } from "./useEnokiSponsoredTransaction";
 
 export function CreateAbout({
   onCreated,
@@ -13,7 +14,7 @@ export function CreateAbout({
   const suilinkPackageId = useNetworkVariable("suilinkPackageId");
   const registryId = useNetworkVariable("registryId");
   const suiClient = useSuiClient();
-  const { mutate: signAndExecute } = useSignAndExecuteTransaction();
+  const { executeSponsoredTransaction } = useEnokiSponsoredTransaction();
 
   const [waitingForTxn, setWaitingForTxn] = useState(false);
   const [formData, setFormData] = useState({
@@ -40,80 +41,72 @@ export function CreateAbout({
       target: `${suilinkPackageId}::about::create`,
     });
 
-    signAndExecute(
-      {
-        transaction: tx,
-      },
-      {
-        onSuccess: (txResult) => {
-          suiClient
-            .waitForTransaction({ digest: txResult.digest, options: { showEffects: true, showObjectChanges: true } })
-            .then(async (result) => {
-              const aboutObjectId = result.effects?.created?.[0]?.reference?.objectId;
-              if (aboutObjectId) {
-                console.log("✅ About Object Created!");
-                console.log("About Object ID:", aboutObjectId);
+    executeSponsoredTransaction(tx, {
+      onSuccess: (txResult) => {
+        suiClient
+          .waitForTransaction({ digest: txResult.digest, options: { showEffects: true, showObjectChanges: true } })
+          .then(async (result) => {
+            const aboutObjectId = result.effects?.created?.[0]?.reference?.objectId;
+            if (aboutObjectId) {
+              console.log("✅ About Object Created!");
+              console.log("About Object ID:", aboutObjectId);
 
-                // Fetch the full object to log it
-                const aboutObject = await suiClient.getObject({
-                  id: aboutObjectId,
-                  options: { showContent: true },
+              // Fetch the full object to log it
+              const aboutObject = await suiClient.getObject({
+                id: aboutObjectId,
+                options: { showContent: true },
+              });
+
+              console.log("About Object:", aboutObject);
+
+              // 2. Register username in registry
+              if (formData.username) {
+                console.log("📝 Registering username:", formData.username);
+
+                const registryTx = new Transaction();
+                registryTx.moveCall({
+                  arguments: [
+                    registryTx.object(registryId),
+                    registryTx.pure.string(formData.username),
+                    registryTx.pure.id(aboutObjectId),
+                  ],
+                  target: `${suilinkPackageId}::registry::register`,
                 });
 
-                console.log("About Object:", aboutObject);
-
-                // 2. Register username in registry
-                if (formData.username) {
-                  console.log("📝 Registering username:", formData.username);
-
-                  const registryTx = new Transaction();
-                  registryTx.moveCall({
-                    arguments: [
-                      registryTx.object(registryId),
-                      registryTx.pure.string(formData.username),
-                      registryTx.pure.id(aboutObjectId),
-                    ],
-                    target: `${suilinkPackageId}::registry::register`,
-                  });
-
-                  signAndExecute(
-                    { transaction: registryTx },
-                    {
-                      onSuccess: (regTx) => {
-                        suiClient.waitForTransaction({ digest: regTx.digest }).then(() => {
-                          console.log("✅ Username registered successfully!");
-                          console.log(`🔗 Your URL: abc.com/${formData.username}`);
-                        });
-                      },
-                      onError: (error) => {
-                        console.error("❌ Registration failed:", error);
-                      },
-                    }
-                  );
-                }
-
-                if (onCreated) {
-                  onCreated(aboutObjectId);
-                }
-                setWaitingForTxn(false);
-
-                // Reset form
-                setFormData({
-                  username: "",
-                  name: "",
-                  lastname: "",
-                  website: "",
-                  about: "",
+                executeSponsoredTransaction(registryTx, {
+                  onSuccess: (regTx) => {
+                    suiClient.waitForTransaction({ digest: regTx.digest }).then(() => {
+                      console.log("✅ Username registered successfully!");
+                      console.log(`🔗 Your URL: abc.com/${formData.username}`);
+                    });
+                  },
+                  onError: (error) => {
+                    console.error("❌ Registration failed:", error);
+                  },
                 });
               }
-            });
-        },
-        onError: (error) => {
-          console.error("Transaction failed:", error);
-          setWaitingForTxn(false);
-        },
+
+              if (onCreated) {
+                onCreated(aboutObjectId);
+              }
+              setWaitingForTxn(false);
+
+              // Reset form
+              setFormData({
+                username: "",
+                name: "",
+                lastname: "",
+                website: "",
+                about: "",
+              });
+            }
+          });
       },
-    );
+      onError: (error) => {
+        console.error("Transaction failed:", error);
+        setWaitingForTxn(false);
+      },
+    });
   };
 
   return (

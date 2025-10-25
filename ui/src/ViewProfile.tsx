@@ -1,10 +1,11 @@
 import { Transaction } from "@mysten/sui/transactions";
 import { Button, Container, TextField, Flex, Text, Card, Box, Separator } from "@radix-ui/themes";
-import { useSuiClient, useCurrentAccount, useSignAndExecuteTransaction } from "@mysten/dapp-kit";
+import { useSuiClient, useCurrentAccount } from "@mysten/dapp-kit";
 import { useNetworkVariable } from "./networkConfig";
 import { useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { bcs } from "@mysten/sui/bcs";
+import { useEnokiSponsoredTransaction } from "./useEnokiSponsoredTransaction";
 
 interface AboutProfile {
   name: string;
@@ -33,7 +34,7 @@ export function ViewProfile() {
   const nftRegistryId = useNetworkVariable("nftRegistryId");
   const suiClient = useSuiClient();
   const currentAccount = useCurrentAccount();
-  const { mutate: signAndExecute } = useSignAndExecuteTransaction();
+  const { executeSponsoredTransaction } = useEnokiSponsoredTransaction();
 
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState("");
@@ -245,35 +246,30 @@ export function ViewProfile() {
       target: `${suilinkPackageId}::nft_list::add_nft`,
     });
 
-    signAndExecute(
-      {
-        transaction: tx,
+    executeSponsoredTransaction(tx, {
+      onSuccess: (result) => {
+        suiClient
+          .waitForTransaction({ digest: result.digest, options: { showEffects: true } })
+          .then(() => {
+            console.log("✅ NFT added successfully!");
+            
+            // Form'u temizle
+            setNftUrl("");
+            setNftTitle("");
+            setNftDescription("");
+            setShowNFTForm(false);
+            setAddingNFT(false);
+            
+            // Profili yeniden fetch et
+            fetchProfile();
+          });
       },
-      {
-        onSuccess: (result) => {
-          suiClient
-            .waitForTransaction({ digest: result.digest, options: { showEffects: true } })
-            .then(() => {
-              console.log("✅ NFT added successfully!");
-              
-              // Form'u temizle
-              setNftUrl("");
-              setNftTitle("");
-              setNftDescription("");
-              setShowNFTForm(false);
-              setAddingNFT(false);
-              
-              // Profili yeniden fetch et
-              fetchProfile();
-            });
-        },
-        onError: (error) => {
-          console.error("❌ Failed to add NFT:", error);
-          setError(error.message || "Failed to add NFT");
-          setAddingNFT(false);
-        },
+      onError: (error) => {
+        console.error("❌ Failed to add NFT:", error);
+        setError(error.message || "Failed to add NFT");
+        setAddingNFT(false);
       },
-    );
+    });
   };
 
   return (

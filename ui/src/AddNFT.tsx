@@ -1,15 +1,16 @@
 import { Transaction } from "@mysten/sui/transactions";
 import { Button, Container, TextField, Flex, Text, TextArea } from "@radix-ui/themes";
-import { useSignAndExecuteTransaction, useSuiClient } from "@mysten/dapp-kit";
+import { useSuiClient } from "@mysten/dapp-kit";
 import { useNetworkVariable } from "./networkConfig";
 import { useState } from "react";
 import { ClipLoader } from "react-spinners";
+import { useEnokiSponsoredTransaction } from "./useEnokiSponsoredTransaction";
 
 export function AddNFT() {
   const suilinkPackageId = useNetworkVariable("suilinkPackageId");
   const nftRegistryId = useNetworkVariable("nftRegistryId");
   const suiClient = useSuiClient();
-  const { mutate: signAndExecute } = useSignAndExecuteTransaction();
+  const { executeSponsoredTransaction } = useEnokiSponsoredTransaction();
 
   const [waitingForTxn, setWaitingForTxn] = useState(false);
   const [formData, setFormData] = useState({
@@ -35,37 +36,32 @@ export function AddNFT() {
       target: `${suilinkPackageId}::nft_list::add_nft`,
     });
 
-    signAndExecute(
-      {
-        transaction: tx,
-      },
-      {
-        onSuccess: (tx) => {
-          suiClient
-            .waitForTransaction({ digest: tx.digest, options: { showEffects: true } })
-            .then(() => {
-              console.log("✅ NFT added successfully!");
-              console.log("Username:", formData.username);
-              console.log("Title:", formData.title);
-              console.log("NFT URL:", formData.nft_url);
+    executeSponsoredTransaction(tx, {
+      onSuccess: (tx) => {
+        suiClient
+          .waitForTransaction({ digest: tx.digest, options: { showEffects: true } })
+          .then(() => {
+            console.log("✅ NFT added successfully!");
+            console.log("Username:", formData.username);
+            console.log("Title:", formData.title);
+            console.log("NFT URL:", formData.nft_url);
 
-              setWaitingForTxn(false);
+            setWaitingForTxn(false);
 
-              // Reset form (keep username)
-              setFormData({
-                username: formData.username,
-                nft_url: "",
-                title: "",
-                description: "",
-              });
+            // Reset form (keep username)
+            setFormData({
+              username: formData.username,
+              nft_url: "",
+              title: "",
+              description: "",
             });
-        },
-        onError: (error) => {
-          console.error("❌ Failed to add NFT:", error);
-          setWaitingForTxn(false);
-        },
+          });
       },
-    );
+      onError: (error) => {
+        console.error("❌ Failed to add NFT:", error);
+        setWaitingForTxn(false);
+      },
+    });
   };
 
   return (
