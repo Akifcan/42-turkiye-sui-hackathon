@@ -132,152 +132,262 @@ export function ProfileCard({
         </div>
       </div>
 
-      {/* Website Link */}
-      {profile.website && (
+      {/* Website & Social Links - Merged with Liquid Glass */}
+      {(profile.website || links.length > 0) && (
         <div
-          className="liquid-glass"
           style={{
             width: "100%",
             maxWidth: "clamp(280px, 50vw, 600px)",
-            padding: "clamp(16px, 3vw, 24px)",
           }}
         >
-          <h3
-            style={{
-              fontSize: "clamp(16px, 3vw, 20px)",
-              fontWeight: "600",
-              fontFamily: "var(--font-family-heading)",
-              color: "rgba(0, 0, 0, 0.85)",
-              margin: "0 0 clamp(8px, 1.5vw, 12px) 0",
-            }}
-          >
-            🌐 Website
-          </h3>
-          <a
-            href={profile.website}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              color: "#0066cc",
-              fontSize: "clamp(14px, 2.5vw, 16px)",
-              fontFamily: "var(--font-family-body)",
-              textDecoration: "none",
-              display: "inline-block",
-              transition: "color 0.2s",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "#0088ff")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "#0066cc")}
-          >
-            {profile.website}
-          </a>
-        </div>
-      )}
+          {/* SVG Filter for Glass Distortion */}
+          <svg style={{ position: "absolute", width: 0, height: 0 }}>
+            <filter
+              id="profile-glass-distortion"
+              x="0%"
+              y="0%"
+              width="100%"
+              height="100%"
+              filterUnits="objectBoundingBox"
+            >
+              <feTurbulence
+                type="fractalNoise"
+                baseFrequency="0.001 0.005"
+                numOctaves="1"
+                seed="17"
+                result="turbulence"
+              />
+              <feComponentTransfer in="turbulence" result="mapped">
+                <feFuncR type="gamma" amplitude="1" exponent="10" offset="0.5" />
+                <feFuncG type="gamma" amplitude="0" exponent="1" offset="0" />
+                <feFuncB type="gamma" amplitude="0" exponent="1" offset="0.5" />
+              </feComponentTransfer>
+              <feGaussianBlur in="turbulence" stdDeviation="3" result="softMap" />
+              <feSpecularLighting
+                in="softMap"
+                surfaceScale="5"
+                specularConstant="1"
+                specularExponent="100"
+                lightingColor="white"
+                result="specLight"
+              >
+                <fePointLight x="-200" y="-200" z="300" />
+              </feSpecularLighting>
+              <feComposite
+                in="specLight"
+                operator="arithmetic"
+                k1="0"
+                k2="1"
+                k3="1"
+                k4="0"
+                result="litImage"
+              />
+              <feDisplacementMap
+                in="SourceGraphic"
+                in2="softMap"
+                scale="200"
+                xChannelSelector="R"
+                yChannelSelector="G"
+              />
+            </filter>
+          </svg>
 
-      {/* Social Links Section */}
-      {links.length > 0 && (
-        <div
-          style={{
-            width: "100%",
-            maxWidth: "clamp(280px, 50vw, 600px)",
-          }}
-        >
-          <h2
-            style={{
-              fontSize: "clamp(20px, 4vw, 28px)",
-              fontWeight: "600",
-              fontFamily: "var(--font-family-heading)",
-              color: "rgba(0, 0, 0, 0.85)",
-              marginBottom: "clamp(16px, 3vw, 24px)",
-              textAlign: "center",
-            }}
-          >
-            🔗 Social Links
-          </h2>
           <div
             style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "clamp(12px, 2vw, 16px)",
+              position: "relative",
+              padding: "clamp(20px, 4vw, 32px)",
+              borderRadius: "clamp(20px, 4vw, 28px)",
+              overflow: "hidden",
+              boxShadow: "0 6px 6px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 0, 0, 0.1)",
             }}
           >
-            {links.map((link, index) => (
-              <a
-                key={index}
-                href={link.siteurl}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  padding: "clamp(16px, 3vw, 20px)",
-                  borderRadius: "clamp(16px, 3vw, 20px)",
-                  background: "rgba(255, 255, 255, 0.15)",
-                  backdropFilter: "blur(20px)",
-                  WebkitBackdropFilter: "blur(20px)",
-                  border: "1px solid rgba(255, 255, 255, 0.25)",
-                  boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
-                  textDecoration: "none",
-                  transition: "all 0.3s ease",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "clamp(12px, 2vw, 16px)",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background =
-                    "rgba(255, 255, 255, 0.22)";
-                  e.currentTarget.style.transform = "translateY(-2px)";
-                  e.currentTarget.style.boxShadow =
-                    "0 12px 40px rgba(0, 0, 0, 0.4)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background =
-                    "rgba(255, 255, 255, 0.15)";
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow =
-                    "0 8px 32px rgba(0, 0, 0, 0.3)";
-                }}
-              >
-                {link.iconurl && (
-                  <img
-                    src={link.iconurl}
-                    alt={link.sitename}
+            {/* Glass Backdrop Layer */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                zIndex: 0,
+                overflow: "hidden",
+                borderRadius: "clamp(20px, 4vw, 28px)",
+                backdropFilter: "blur(3px)",
+                WebkitBackdropFilter: "blur(3px)",
+                filter: "url(#profile-glass-distortion)",
+                isolation: "isolate",
+              }}
+            />
+
+            {/* White overlay */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                zIndex: 1,
+                background: "rgba(255, 255, 255, 0.25)",
+                borderRadius: "clamp(20px, 4vw, 28px)",
+              }}
+            />
+
+            {/* Inner Glass Highlights */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                zIndex: 2,
+                borderRadius: "clamp(20px, 4vw, 28px)",
+                overflow: "hidden",
+                boxShadow:
+                  "inset 2px 2px 1px 0 rgba(255, 255, 255, 0.5), inset -1px -1px 1px 1px rgba(255, 255, 255, 0.5)",
+              }}
+            />
+
+            {/* Content */}
+            <div
+              style={{
+                position: "relative",
+                zIndex: 10,
+                display: "flex",
+                flexDirection: "column",
+                gap: "clamp(20px, 3vw, 28px)",
+              }}
+            >
+              {/* Website Section */}
+              {profile.website && (
+                <div>
+                  <h3
                     style={{
-                      width: "clamp(32px, 6vw, 48px)",
-                      height: "clamp(32px, 6vw, 48px)",
-                      borderRadius: "50%",
-                      objectFit: "cover",
-                    }}
-                  />
-                )}
-                <div style={{ flex: 1 }}>
-                  <div
-                    style={{
-                      fontSize: "clamp(16px, 3vw, 18px)",
+                      fontSize: "clamp(18px, 3vw, 22px)",
                       fontWeight: "600",
                       fontFamily: "var(--font-family-heading)",
                       color: "rgba(0, 0, 0, 0.85)",
-                      marginBottom: "4px",
+                      margin: "0 0 clamp(10px, 2vw, 14px) 0",
                     }}
                   >
-                    {link.sitename}
-                  </div>
-                  {link.description && (
+                    🌐 Website
+                  </h3>
+                  <a
+                    href={profile.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: "#0066cc",
+                      fontSize: "clamp(14px, 2.5vw, 16px)",
+                      fontFamily: "var(--font-family-body)",
+                      textDecoration: "none",
+                      display: "inline-block",
+                      transition: "color 0.2s",
+                      wordBreak: "break-all",
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = "#0088ff")}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = "#0066cc")}
+                  >
+                    {profile.website}
+                  </a>
+                </div>
+              )}
+
+              {/* Social Links */}
+              {links.length > 0 && (
+                <div>
+                  {profile.website && (
                     <div
                       style={{
-                        fontSize: "clamp(13px, 2.5vw, 14px)",
-                        fontFamily: "var(--font-family-body)",
-                        color: "rgba(0, 0, 0, 0.6)",
+                        height: "1px",
+                        background: "rgba(0, 0, 0, 0.1)",
+                        margin: "clamp(8px, 2vw, 12px) 0 clamp(16px, 3vw, 24px) 0",
                       }}
-                    >
-                      {link.description}
-                    </div>
+                    />
                   )}
+                  <h3
+                    style={{
+                      fontSize: "clamp(18px, 3vw, 22px)",
+                      fontWeight: "600",
+                      fontFamily: "var(--font-family-heading)",
+                      color: "rgba(0, 0, 0, 0.85)",
+                      margin: "0 0 clamp(12px, 2vw, 16px) 0",
+                    }}
+                  >
+                    🔗 Social Links
+                  </h3>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "clamp(10px, 2vw, 14px)",
+                    }}
+                  >
+                    {links.map((link, index) => (
+                      <a
+                        key={index}
+                        href={link.siteurl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          padding: "clamp(12px, 2.5vw, 16px)",
+                          borderRadius: "clamp(12px, 2.5vw, 16px)",
+                          background: "rgba(0, 0, 0, 0.05)",
+                          border: "1px solid rgba(0, 0, 0, 0.08)",
+                          textDecoration: "none",
+                          transition: "all 0.2s ease",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "clamp(10px, 2vw, 14px)",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = "rgba(0, 0, 0, 0.08)";
+                          e.currentTarget.style.transform = "translateX(4px)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = "rgba(0, 0, 0, 0.05)";
+                          e.currentTarget.style.transform = "translateX(0)";
+                        }}
+                      >
+                        {link.iconurl && (
+                          <img
+                            src={link.iconurl}
+                            alt={link.sitename}
+                            style={{
+                              width: "clamp(28px, 5vw, 40px)",
+                              height: "clamp(28px, 5vw, 40px)",
+                              borderRadius: "50%",
+                              objectFit: "cover",
+                            }}
+                          />
+                        )}
+                        <div style={{ flex: 1 }}>
+                          <div
+                            style={{
+                              fontSize: "clamp(15px, 2.8vw, 17px)",
+                              fontWeight: "600",
+                              fontFamily: "var(--font-family-heading)",
+                              color: "rgba(0, 0, 0, 0.85)",
+                              marginBottom: "2px",
+                            }}
+                          >
+                            {link.sitename}
+                          </div>
+                          {link.description && (
+                            <div
+                              style={{
+                                fontSize: "clamp(12px, 2.3vw, 13px)",
+                                fontFamily: "var(--font-family-body)",
+                                color: "rgba(0, 0, 0, 0.55)",
+                              }}
+                            >
+                              {link.description}
+                            </div>
+                          )}
+                        </div>
+                      </a>
+                    ))}
+                  </div>
                 </div>
-              </a>
-            ))}
+              )}
+            </div>
           </div>
         </div>
       )}
 
-      {/* NFT Gallery Section */}
+      {/* NFT Gallery Section with Liquid Glass */}
       {nfts.length > 0 && (
         <div
           style={{
@@ -285,6 +395,58 @@ export function ProfileCard({
             maxWidth: "clamp(280px, 90vw, 1200px)",
           }}
         >
+          {/* SVG Filter for NFT Glass */}
+          <svg style={{ position: "absolute", width: 0, height: 0 }}>
+            <filter
+              id="nft-glass-distortion"
+              x="0%"
+              y="0%"
+              width="100%"
+              height="100%"
+              filterUnits="objectBoundingBox"
+            >
+              <feTurbulence
+                type="fractalNoise"
+                baseFrequency="0.001 0.005"
+                numOctaves="1"
+                seed="17"
+                result="turbulence"
+              />
+              <feComponentTransfer in="turbulence" result="mapped">
+                <feFuncR type="gamma" amplitude="1" exponent="10" offset="0.5" />
+                <feFuncG type="gamma" amplitude="0" exponent="1" offset="0" />
+                <feFuncB type="gamma" amplitude="0" exponent="1" offset="0.5" />
+              </feComponentTransfer>
+              <feGaussianBlur in="turbulence" stdDeviation="3" result="softMap" />
+              <feSpecularLighting
+                in="softMap"
+                surfaceScale="5"
+                specularConstant="1"
+                specularExponent="100"
+                lightingColor="white"
+                result="specLight"
+              >
+                <fePointLight x="-200" y="-200" z="300" />
+              </feSpecularLighting>
+              <feComposite
+                in="specLight"
+                operator="arithmetic"
+                k1="0"
+                k2="1"
+                k3="1"
+                k4="0"
+                result="litImage"
+              />
+              <feDisplacementMap
+                in="SourceGraphic"
+                in2="softMap"
+                scale="200"
+                xChannelSelector="R"
+                yChannelSelector="G"
+              />
+            </filter>
+          </svg>
+
           <h2
             style={{
               fontSize: "clamp(20px, 4vw, 28px)",
@@ -309,65 +471,104 @@ export function ProfileCard({
               <div
                 key={index}
                 style={{
+                  position: "relative",
                   borderRadius: "clamp(16px, 3vw, 24px)",
-                  background: "rgba(255, 255, 255, 0.15)",
-                  backdropFilter: "blur(20px)",
-                  WebkitBackdropFilter: "blur(20px)",
-                  border: "1px solid rgba(255, 255, 255, 0.25)",
-                  boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
                   overflow: "hidden",
+                  boxShadow: "0 6px 6px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 0, 0, 0.1)",
                   transition: "all 0.3s ease",
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = "translateY(-4px)";
                   e.currentTarget.style.boxShadow =
-                    "0 12px 40px rgba(0, 0, 0, 0.4)";
+                    "0 12px 12px rgba(0, 0, 0, 0.25), 0 0 30px rgba(0, 0, 0, 0.15)";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = "translateY(0)";
                   e.currentTarget.style.boxShadow =
-                    "0 8px 32px rgba(0, 0, 0, 0.3)";
+                    "0 6px 6px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 0, 0, 0.1)";
                 }}
               >
-                <img
-                  src={nft.nft_url}
-                  alt={nft.title}
-                  style={{
-                    width: "100%",
-                    aspectRatio: "1 / 1",
-                    objectFit: "cover",
-                    display: "block",
-                  }}
-                />
+                {/* Glass Backdrop Layer */}
                 <div
                   style={{
-                    padding: "clamp(12px, 2.5vw, 16px)",
+                    position: "absolute",
+                    inset: 0,
+                    zIndex: 0,
+                    overflow: "hidden",
+                    borderRadius: "clamp(16px, 3vw, 24px)",
+                    backdropFilter: "blur(3px)",
+                    WebkitBackdropFilter: "blur(3px)",
+                    filter: "url(#nft-glass-distortion)",
+                    isolation: "isolate",
                   }}
-                >
-                  <h3
+                />
+
+                {/* White overlay */}
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    zIndex: 1,
+                    background: "rgba(255, 255, 255, 0.25)",
+                    borderRadius: "clamp(16px, 3vw, 24px)",
+                  }}
+                />
+
+                {/* Inner Glass Highlights */}
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    zIndex: 2,
+                    borderRadius: "clamp(16px, 3vw, 24px)",
+                    overflow: "hidden",
+                    boxShadow:
+                      "inset 2px 2px 1px 0 rgba(255, 255, 255, 0.5), inset -1px -1px 1px 1px rgba(255, 255, 255, 0.5)",
+                  }}
+                />
+
+                {/* Content */}
+                <div style={{ position: "relative", zIndex: 10 }}>
+                  <img
+                    src={nft.nft_url}
+                    alt={nft.title}
                     style={{
-                      fontSize: "clamp(16px, 3vw, 18px)",
-                      fontWeight: "600",
-                      fontFamily: "var(--font-family-heading)",
-                      color: "rgba(0, 0, 0, 0.85)",
-                      margin: "0 0 clamp(6px, 1vw, 8px) 0",
+                      width: "100%",
+                      aspectRatio: "1 / 1",
+                      objectFit: "cover",
+                      display: "block",
+                    }}
+                  />
+                  <div
+                    style={{
+                      padding: "clamp(12px, 2.5vw, 16px)",
                     }}
                   >
-                    {nft.title}
-                  </h3>
-                  {nft.description && (
-                    <p
+                    <h3
                       style={{
-                        fontSize: "clamp(13px, 2.5vw, 14px)",
-                        fontFamily: "var(--font-family-body)",
-                        color: "rgba(0, 0, 0, 0.6)",
-                        margin: 0,
-                        lineHeight: "1.5",
+                        fontSize: "clamp(16px, 3vw, 18px)",
+                        fontWeight: "600",
+                        fontFamily: "var(--font-family-heading)",
+                        color: "rgba(0, 0, 0, 0.85)",
+                        margin: "0 0 clamp(6px, 1vw, 8px) 0",
                       }}
                     >
-                      {nft.description}
-                    </p>
-                  )}
+                      {nft.title}
+                    </h3>
+                    {nft.description && (
+                      <p
+                        style={{
+                          fontSize: "clamp(13px, 2.5vw, 14px)",
+                          fontFamily: "var(--font-family-body)",
+                          color: "rgba(0, 0, 0, 0.6)",
+                          margin: 0,
+                          lineHeight: "1.5",
+                        }}
+                      >
+                        {nft.description}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
