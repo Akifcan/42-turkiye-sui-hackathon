@@ -44,9 +44,13 @@ export function AthleteProfileForm() {
     executeSponsoredTransaction(tx, {
       onSuccess: (txResult) => {
         suiClient
-          .waitForTransaction({ digest: txResult.digest, options: { showEffects: true, showObjectChanges: true } })
+          .waitForTransaction({
+            digest: txResult.digest,
+            options: { showEffects: true, showObjectChanges: true },
+          })
           .then(async (result) => {
-            const aboutObjectId = result.effects?.created?.[0]?.reference?.objectId;
+            const aboutObjectId =
+              result.effects?.created?.[0]?.reference?.objectId;
             if (aboutObjectId) {
               console.log("✅ About Object Created:", aboutObjectId);
 
@@ -63,18 +67,22 @@ export function AthleteProfileForm() {
 
                 executeSponsoredTransaction(registryTx, {
                   onSuccess: (regTx) => {
-                    suiClient.waitForTransaction({ digest: regTx.digest }).then(() => {
-                      console.log(`✅ Profile created: athlifi.com/${formData.username}`);
-                      setSuccess(true);
-                      setWaitingForTxn(false);
-                      setFormData({
-                        username: "",
-                        name: "",
-                        lastname: "",
-                        website: "",
-                        about: "",
+                    suiClient
+                      .waitForTransaction({ digest: regTx.digest })
+                      .then(() => {
+                        console.log(
+                          `✅ Profile created: athlifi.com/${formData.username}`,
+                        );
+                        setSuccess(true);
+                        setWaitingForTxn(false);
+                        setFormData({
+                          username: "",
+                          name: "",
+                          lastname: "",
+                          website: "",
+                          about: "",
+                        });
                       });
-                    });
                   },
                   onError: (error) => {
                     console.error("❌ Registration failed:", error);
@@ -94,22 +102,32 @@ export function AthleteProfileForm() {
 
   return (
     <Card>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xl)' }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "var(--spacing-xl)",
+        }}
+      >
         <div>
-          <h2 style={{ 
-            fontSize: '24px', 
-            fontWeight: 'var(--font-weight-bold)', 
-            fontFamily: 'var(--font-family-heading)',
-            marginBottom: 'var(--spacing-xs)',
-            color: 'var(--color-text-primary)',
-          }}>
+          <h2
+            style={{
+              fontSize: "24px",
+              fontWeight: "var(--font-weight-bold)",
+              fontFamily: "var(--font-family-heading)",
+              marginBottom: "var(--spacing-xs)",
+              color: "var(--color-text-primary)",
+            }}
+          >
             Create Your Athlete Profile
           </h2>
-          <p style={{ 
-            fontSize: 'var(--font-size-body)', 
-            color: 'var(--color-text-secondary)',
-            fontFamily: 'var(--font-family-body)',
-          }}>
+          <p
+            style={{
+              fontSize: "var(--font-size-body)",
+              color: "var(--color-text-secondary)",
+              fontFamily: "var(--font-family-body)",
+            }}
+          >
             Set up your AthliFi profile to connect with your supporters
           </p>
         </div>
@@ -117,18 +135,22 @@ export function AthleteProfileForm() {
         {success && (
           <div
             style={{
-              padding: 'var(--spacing-m)',
-              borderRadius: 'var(--radius-m)',
-              backgroundColor: 'rgba(16, 149, 236, 0.15)',
-              border: 'var(--border-width-none) solid var(--color-brand-primary)',
+              padding: "var(--spacing-m)",
+              borderRadius: "var(--radius-m)",
+              backgroundColor: "rgba(16, 149, 236, 0.15)",
+              border:
+                "var(--border-width-none) solid var(--color-brand-primary)",
             }}
           >
-            <p style={{ 
-              color: 'var(--color-brand-primary)', 
-              fontWeight: 'var(--font-weight-medium)',
-              fontFamily: 'var(--font-family-body)',
-            }}>
-              ✓ Profile created successfully! Your URL: athlifi.com/{formData.username || 'your-username'}
+            <p
+              style={{
+                color: "var(--color-brand-primary)",
+                fontWeight: "var(--font-weight-medium)",
+                fontFamily: "var(--font-family-body)",
+              }}
+            >
+              ✓ Profile created successfully! Your URL: athlifi.com/
+              {formData.username || "your-username"}
             </p>
           </div>
         )}
@@ -138,17 +160,22 @@ export function AthleteProfileForm() {
           placeholder="usain-bolt"
           value={formData.username}
           onChange={(e) =>
-            setFormData({ ...formData, username: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })
+            setFormData({
+              ...formData,
+              username: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""),
+            })
           }
           disabled={waitingForTxn}
         />
         {formData.username && (
-          <p style={{ 
-            fontSize: 'var(--font-size-small)', 
-            color: 'var(--color-brand-primary)', 
-            marginTop: '-12px',
-            fontFamily: 'var(--font-family-body)',
-          }}>
+          <p
+            style={{
+              fontSize: "var(--font-size-small)",
+              color: "var(--color-brand-primary)",
+              marginTop: "-12px",
+              fontFamily: "var(--font-family-body)",
+            }}
+          >
             Your URL: athlifi.com/{formData.username}
           </p>
         )}
@@ -165,7 +192,9 @@ export function AthleteProfileForm() {
           label="Last Name"
           placeholder="Bolt"
           value={formData.lastname}
-          onChange={(e) => setFormData({ ...formData, lastname: e.target.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, lastname: e.target.value })
+          }
           disabled={waitingForTxn}
         />
 
@@ -173,7 +202,9 @@ export function AthleteProfileForm() {
           label="Website (Optional)"
           placeholder="https://example.com"
           value={formData.website}
-          onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, website: e.target.value })
+          }
           disabled={waitingForTxn}
         />
 
@@ -188,7 +219,12 @@ export function AthleteProfileForm() {
 
         <Button
           onClick={create}
-          disabled={waitingForTxn || !formData.username || !formData.name || !formData.lastname}
+          disabled={
+            waitingForTxn ||
+            !formData.username ||
+            !formData.name ||
+            !formData.lastname
+          }
           loading={waitingForTxn}
           variant="accent"
         >
@@ -198,4 +234,3 @@ export function AthleteProfileForm() {
     </Card>
   );
 }
-

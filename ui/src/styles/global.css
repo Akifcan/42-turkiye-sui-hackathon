@@ -1,7 +1,7 @@
 /* AthliFi Design System - Based on air.inc.json tokens */
 
 /* Import design tokens */
-@import './tokens.css';
+@import "./tokens.css";
 
 * {
   box-sizing: border-box;
@@ -14,9 +14,10 @@ body {
   font-size: var(--font-size-body);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
-  background: linear-gradient(180deg, 
-    rgb(135, 206, 250) 0%, 
-    rgb(176, 224, 255) 50%, 
+  background: linear-gradient(
+    180deg,
+    rgb(135, 206, 250) 0%,
+    rgb(176, 224, 255) 50%,
     rgb(200, 235, 255) 100%
   );
   background-attachment: fixed;
@@ -29,16 +30,29 @@ body {
   min-height: 100vh;
 }
 
-img, picture, video, canvas, svg {
+img,
+picture,
+video,
+canvas,
+svg {
   display: block;
   max-width: 100%;
 }
 
-input, button, textarea, select {
+input,
+button,
+textarea,
+select {
   font: inherit;
 }
 
-p, h1, h2, h3, h4, h5, h6 {
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   overflow-wrap: break-word;
 }
 
@@ -57,7 +71,12 @@ a:hover {
   text-decoration: underline;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-family-heading);
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
@@ -77,4 +96,3 @@ h3 {
   font-size: 20px;
   line-height: 1.4;
 }
-

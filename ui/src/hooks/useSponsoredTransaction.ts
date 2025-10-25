@@ -15,7 +15,7 @@ export function useSponsoredTransaction() {
    */
   const createSponsoredTransaction = async (
     tx: Transaction,
-    sponsorAddress: string
+    sponsorAddress: string,
   ) => {
     // Set the sponsor as the gas owner
     tx.setGasOwner(sponsorAddress);
@@ -35,7 +35,7 @@ export function useSponsoredTransaction() {
   const executeSponsoredTransaction = async (
     tx: Transaction,
     userSignature: string,
-    sponsorSignature: string
+    sponsorSignature: string,
   ) => {
     // Combine signatures and execute
     const result = await suiClient.executeTransactionBlock({

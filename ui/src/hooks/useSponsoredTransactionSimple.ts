@@ -35,11 +35,11 @@ export function useSponsoredTransactionSimple() {
     try {
       // Create sponsor keypair from private key
       const sponsorKeypair = Ed25519Keypair.fromSecretKey(
-        base64ToUint8Array(DEMO_SPONSOR_PRIVATE_KEY)
+        base64ToUint8Array(DEMO_SPONSOR_PRIVATE_KEY),
       );
       const sponsorAddress = sponsorKeypair.getPublicKey().toSuiAddress();
 
-      console.log('🔐 Sponsor Address:', sponsorAddress);
+      console.log("🔐 Sponsor Address:", sponsorAddress);
 
       // Set sponsor as gas payer
       tx.setSender(sponsorAddress); // User's address
@@ -63,14 +63,13 @@ export function useSponsoredTransactionSimple() {
         signature: [userSignature, sponsorSignature.signature],
       });
 
-      console.log('✅ Sponsored transaction executed!');
-      console.log('💰 Gas paid by sponsor:', sponsorAddress);
-      console.log('Transaction:', result.digest);
+      console.log("✅ Sponsored transaction executed!");
+      console.log("💰 Gas paid by sponsor:", sponsorAddress);
+      console.log("Transaction:", result.digest);
 
       return result;
-
     } catch (error) {
-      console.error('❌ Sponsored transaction failed:', error);
+      console.error("❌ Sponsored transaction failed:", error);
       throw error;
     }
   };
@@ -99,4 +98,3 @@ export function useSponsoredTransactionSimple() {
  *   // User doesn't pay gas! 🎉
  * };
  */
-

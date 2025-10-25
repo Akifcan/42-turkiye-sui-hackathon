@@ -24,6 +24,7 @@ export interface ProfileData {
   profile: AboutProfile | null;
   links: SocialLink[];
   nfts: NFTItem[];
+  owner: string | null;
 }
 
 export interface CreateProfileFormData {
@@ -48,4 +49,3 @@ export interface AddNFTFormData {
   title: string;
   description: string;
 }
-

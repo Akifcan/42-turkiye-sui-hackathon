@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo } from "react";
 
 interface Cloud {
   id: number;
@@ -19,8 +19,8 @@ export function CloudBackground() {
       setScrollY(window.scrollY);
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Generate clouds with varying properties using useMemo for performance
@@ -36,7 +36,7 @@ export function CloudBackground() {
         opacity: Math.random() * 0.5 + 0.4, // 0.4-0.9 opacity
         depth: i % 5, // 5 depth layers for parallax
       })),
-    []
+    [],
   );
 
   return (
@@ -97,15 +97,15 @@ export function CloudBackground() {
       </style>
       <div
         style={{
-          position: 'fixed',
+          position: "fixed",
           top: 0,
           left: 0,
-          width: '100%',
-          height: '100%',
-          overflow: 'hidden',
+          width: "100%",
+          height: "100%",
+          overflow: "hidden",
           zIndex: 0,
-          pointerEvents: 'none',
-          background: 'linear-gradient(to bottom, #87CEEB 0%, #FFFFFF 100%)',
+          pointerEvents: "none",
+          background: "linear-gradient(to bottom, #87CEEB 0%, #FFFFFF 100%)",
         }}
       >
         {clouds.map((cloud) => {
@@ -122,11 +122,11 @@ export function CloudBackground() {
                 top: `${cloud.top}%`,
                 left: `${cloud.left}%`,
                 transform: `scale(${cloud.scale}) translateY(${parallaxOffset}px)`,
-                transition: 'transform 0.1s ease-out',
+                transition: "transform 0.1s ease-out",
                 // @ts-ignore - CSS custom properties
-                '--cloud-duration': `${cloud.duration}s`,
-                '--cloud-delay': `${cloud.delay}s`,
-                '--cloud-opacity': cloud.opacity,
+                "--cloud-duration": `${cloud.duration}s`,
+                "--cloud-delay": `${cloud.delay}s`,
+                "--cloud-opacity": cloud.opacity,
               }}
             />
           );
@@ -135,4 +135,3 @@ export function CloudBackground() {
     </>
   );
 }
-

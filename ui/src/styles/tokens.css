@@ -5,14 +5,14 @@
   --color-background-base: rgb(135, 206, 250); /* Sky blue */
   --color-text-primary: rgb(30, 30, 30);
   --color-brand-primary: rgb(16, 149, 236);
-  
+
   /* Accent Colors */
   --color-accent-1: rgb(195, 169, 127); /* Gold/Tan */
   --color-neutral-1: rgb(78, 95, 108); /* Neutral Gray */
   --color-accent-2: rgb(16, 149, 237); /* Cyan/Blue */
   --color-accent-3: rgb(141, 187, 219); /* Light Blue */
   --color-accent-4: rgb(248, 218, 172); /* Light Tan */
-  
+
   /* Additional Colors for UI States */
   --color-surface: rgb(255, 255, 255);
   --color-border: rgba(0, 0, 0, 0.1);
@@ -23,8 +23,10 @@
   --color-warning: rgb(234, 67, 29);
 
   /* ========== FONT FAMILY ========== */
-  --font-family-heading: 'Kanit', 'Arial Narrow', Arial, sans-serif;
-  --font-family-body: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-family-heading: "Kanit", "Arial Narrow", Arial, sans-serif;
+  --font-family-body:
+    "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, sans-serif;
   --font-family-mono: monospace;
 
   /* ========== FONT SIZE ========== */
@@ -33,7 +35,7 @@
   --font-size-m: 16px;
   --font-size-l: 32px;
   --font-size-xl: 136px;
-  
+
   /* Additional Font Sizes for UI */
   --font-size-body: 16px;
   --font-size-small: 14px;
@@ -133,4 +135,3 @@
   font-weight: var(--font-weight-medium);
   line-height: 1;
 }
-

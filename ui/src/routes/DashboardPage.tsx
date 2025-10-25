@@ -4,26 +4,37 @@ import { Link } from "react-router-dom";
 
 export function DashboardPage() {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xxl)' }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "var(--spacing-xxl)",
+      }}
+    >
       <div>
-        <Link 
+        <Link
           to="/"
-          style={{ 
-            color: 'var(--color-brand-primary)',
-            textDecoration: 'none',
-            fontSize: 'var(--font-size-body)',
-            fontFamily: 'var(--font-family-body)',
+          style={{
+            color: "var(--color-brand-primary)",
+            textDecoration: "none",
+            fontSize: "var(--font-size-body)",
+            fontFamily: "var(--font-family-body)",
           }}
         >
           ← Back to Home
         </Link>
       </div>
-      
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xxl)' }}>
+
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "var(--spacing-xxl)",
+        }}
+      >
         <SocialLinksManager />
         <NFTGalleryManager />
       </div>
     </div>
   );
 }
-

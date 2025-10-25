@@ -3,15 +3,21 @@ import { Link } from "react-router-dom";
 
 export function CreatePage() {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-m)' }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "var(--spacing-m)",
+      }}
+    >
       <div>
-        <Link 
+        <Link
           to="/"
-          style={{ 
-            color: 'var(--color-brand-primary)',
-            textDecoration: 'none',
-            fontSize: 'var(--font-size-body)',
-            fontFamily: 'var(--font-family-body)',
+          style={{
+            color: "var(--color-brand-primary)",
+            textDecoration: "none",
+            fontSize: "var(--font-size-body)",
+            fontFamily: "var(--font-family-body)",
           }}
         >
           ← Back to Home
@@ -21,4 +27,3 @@ export function CreatePage() {
     </div>
   );
 }
-

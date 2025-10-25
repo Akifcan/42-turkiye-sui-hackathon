@@ -44,7 +44,10 @@ export function NFTGalleryManager() {
     executeSponsoredTransaction(tx, {
       onSuccess: (tx) => {
         suiClient
-          .waitForTransaction({ digest: tx.digest, options: { showEffects: true } })
+          .waitForTransaction({
+            digest: tx.digest,
+            options: { showEffects: true },
+          })
           .then(() => {
             console.log("✅ NFT added successfully!");
             setSuccess(true);
@@ -68,22 +71,32 @@ export function NFTGalleryManager() {
 
   return (
     <Card>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-m)' }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "var(--spacing-m)",
+        }}
+      >
         <div>
-          <h2 style={{ 
-            fontSize: '24px', 
-            fontWeight: 'var(--font-weight-bold)', 
-            fontFamily: 'var(--font-family-heading)',
-            marginBottom: 'var(--spacing-xs)',
-            color: 'var(--color-text-primary)',
-          }}>
+          <h2
+            style={{
+              fontSize: "24px",
+              fontWeight: "var(--font-weight-bold)",
+              fontFamily: "var(--font-family-heading)",
+              marginBottom: "var(--spacing-xs)",
+              color: "var(--color-text-primary)",
+            }}
+          >
             Add NFT to Gallery
           </h2>
-          <p style={{ 
-            fontSize: 'var(--font-size-body)', 
-            color: 'var(--color-text-secondary)',
-            fontFamily: 'var(--font-family-body)',
-          }}>
+          <p
+            style={{
+              fontSize: "var(--font-size-body)",
+              color: "var(--color-text-secondary)",
+              fontFamily: "var(--font-family-body)",
+            }}
+          >
             Add NFTs to your athlete profile gallery
           </p>
         </div>
@@ -91,17 +104,20 @@ export function NFTGalleryManager() {
         {success && (
           <div
             style={{
-              padding: 'var(--spacing-m)',
-              borderRadius: 'var(--radius-m)',
-              backgroundColor: 'rgba(16, 149, 236, 0.15)',
-              border: 'var(--border-width-none) solid var(--color-brand-primary)',
+              padding: "var(--spacing-m)",
+              borderRadius: "var(--radius-m)",
+              backgroundColor: "rgba(16, 149, 236, 0.15)",
+              border:
+                "var(--border-width-none) solid var(--color-brand-primary)",
             }}
           >
-            <p style={{ 
-              color: 'var(--color-brand-primary)', 
-              fontWeight: 'var(--font-weight-medium)',
-              fontFamily: 'var(--font-family-body)',
-            }}>
+            <p
+              style={{
+                color: "var(--color-brand-primary)",
+                fontWeight: "var(--font-weight-medium)",
+                fontFamily: "var(--font-family-body)",
+              }}
+            >
               ✓ NFT added successfully!
             </p>
           </div>
@@ -112,7 +128,10 @@ export function NFTGalleryManager() {
           placeholder="your-username"
           value={formData.username}
           onChange={(e) =>
-            setFormData({ ...formData, username: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })
+            setFormData({
+              ...formData,
+              username: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""),
+            })
           }
           disabled={waitingForTxn}
         />
@@ -129,7 +148,9 @@ export function NFTGalleryManager() {
           label="NFT URL"
           placeholder="https://example.com/nft/1234"
           value={formData.nft_url}
-          onChange={(e) => setFormData({ ...formData, nft_url: e.target.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, nft_url: e.target.value })
+          }
           disabled={waitingForTxn}
         />
 
@@ -137,14 +158,21 @@ export function NFTGalleryManager() {
           label="Description (Optional)"
           placeholder="Description of the NFT"
           value={formData.description}
-          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, description: e.target.value })
+          }
           disabled={waitingForTxn}
           rows={3}
         />
 
         <Button
           onClick={addNFT}
-          disabled={waitingForTxn || !formData.username || !formData.nft_url || !formData.title}
+          disabled={
+            waitingForTxn ||
+            !formData.username ||
+            !formData.nft_url ||
+            !formData.title
+          }
           loading={waitingForTxn}
           variant="accent"
         >
@@ -154,4 +182,3 @@ export function NFTGalleryManager() {
     </Card>
   );
 }
-

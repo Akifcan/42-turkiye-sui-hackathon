@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 interface FloatingElement {
   id: number;
@@ -20,8 +20,8 @@ export function AnimatedBackground() {
       setScrollY(window.scrollY);
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Generate floating elements with different properties
@@ -35,10 +35,10 @@ export function AnimatedBackground() {
     blur: Math.random() * 40 + 10, // 10-50px blur for depth
     opacity: Math.random() * 0.15 + 0.05, // 0.05-0.2 opacity
     color: [
-      'var(--color-brand-primary)',
-      'var(--color-accent-1)',
-      'var(--color-accent-3)',
-      'var(--color-accent-4)',
+      "var(--color-brand-primary)",
+      "var(--color-accent-1)",
+      "var(--color-accent-3)",
+      "var(--color-accent-4)",
     ][Math.floor(Math.random() * 4)],
   }));
 
@@ -76,16 +76,16 @@ export function AnimatedBackground() {
       </style>
       <div
         style={{
-          position: 'fixed',
+          position: "fixed",
           top: 0,
           left: 0,
-          width: '100%',
-          height: '100%',
-          overflow: 'hidden',
+          width: "100%",
+          height: "100%",
+          overflow: "hidden",
           zIndex: 0,
-          pointerEvents: 'none',
-          perspective: '1000px',
-          perspectiveOrigin: '50% 50%',
+          pointerEvents: "none",
+          perspective: "1000px",
+          perspectiveOrigin: "50% 50%",
         }}
       >
         {elements.map((element, index) => {
@@ -103,13 +103,13 @@ export function AnimatedBackground() {
                 width: `${element.size}px`,
                 height: `${element.size}px`,
                 transform: `translateY(${parallaxOffset}px)`,
-                transition: 'transform 0.1s ease-out',
+                transition: "transform 0.1s ease-out",
                 // @ts-ignore - CSS custom properties
-                '--element-duration': `${element.duration}s`,
-                '--element-delay': `${element.delay}s`,
-                '--element-blur': `${element.blur}px`,
-                '--element-opacity': element.opacity,
-                '--element-color': element.color,
+                "--element-duration": `${element.duration}s`,
+                "--element-delay": `${element.delay}s`,
+                "--element-blur": `${element.blur}px`,
+                "--element-opacity": element.opacity,
+                "--element-color": element.color,
               }}
             />
           );
@@ -118,4 +118,3 @@ export function AnimatedBackground() {
     </>
   );
 }
-

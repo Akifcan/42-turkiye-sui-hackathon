@@ -9,36 +9,36 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 
 function App() {
   return (
-    <div style={{ minHeight: '100vh', position: 'relative' }}>
+    <div style={{ minHeight: "100vh", position: "relative" }}>
       <Header />
-      
+
       <main
         style={{
-          maxWidth: '800px',
-          margin: '0 auto',
-          padding: 'var(--spacing-xxl) var(--spacing-xl)',
-          position: 'relative',
+          maxWidth: "800px",
+          margin: "0 auto",
+          padding: "var(--spacing-xxl) var(--spacing-xl)",
+          position: "relative",
           zIndex: 1,
         }}
       >
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/:username" element={<ProfilePage />} />
-          <Route 
-            path="/create" 
+          <Route
+            path="/create"
             element={
               <ProtectedRoute>
                 <CreatePage />
               </ProtectedRoute>
-            } 
+            }
           />
-          <Route 
-            path="/dashboard" 
+          <Route
+            path="/dashboard"
             element={
               <ProtectedRoute>
                 <DashboardPage />
               </ProtectedRoute>
-            } 
+            }
           />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

@@ -1,4 +1,4 @@
-import { TextareaHTMLAttributes } from 'react';
+import { TextareaHTMLAttributes } from "react";
 
 interface TextAreaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
@@ -7,14 +7,20 @@ interface TextAreaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
 
 export function TextArea({ label, error, style, ...props }: TextAreaProps) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xs)' }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "var(--spacing-xs)",
+      }}
+    >
       {label && (
         <label
           style={{
-            fontSize: 'var(--font-size-small)',
-            fontWeight: 'var(--font-weight-medium)',
-            color: 'var(--color-text-primary)',
-            fontFamily: 'var(--font-family-body)',
+            fontSize: "var(--font-size-small)",
+            fontWeight: "var(--font-weight-medium)",
+            color: "var(--color-text-primary)",
+            fontFamily: "var(--font-family-body)",
           }}
         >
           {label}
@@ -22,16 +28,16 @@ export function TextArea({ label, error, style, ...props }: TextAreaProps) {
       )}
       <textarea
         style={{
-          padding: 'var(--spacing-s) var(--spacing-m)',
-          borderRadius: 'var(--radius-s)',
-          border: `var(--border-width-none) solid ${error ? 'var(--color-error)' : 'var(--color-border)'}`,
-          fontSize: 'var(--font-size-body)',
-          backgroundColor: 'var(--color-surface)',
-          color: 'var(--color-text-primary)',
-          outline: 'none',
-          transition: 'border-color var(--transition-base)',
-          resize: 'vertical',
-          fontFamily: 'var(--font-family-body)',
+          padding: "var(--spacing-s) var(--spacing-m)",
+          borderRadius: "var(--radius-s)",
+          border: `var(--border-width-none) solid ${error ? "var(--color-error)" : "var(--color-border)"}`,
+          fontSize: "var(--font-size-body)",
+          backgroundColor: "var(--color-surface)",
+          color: "var(--color-text-primary)",
+          outline: "none",
+          transition: "border-color var(--transition-base)",
+          resize: "vertical",
+          fontFamily: "var(--font-family-body)",
           ...style,
         }}
         {...props}
@@ -39,9 +45,9 @@ export function TextArea({ label, error, style, ...props }: TextAreaProps) {
       {error && (
         <span
           style={{
-            fontSize: 'var(--font-size-small)',
-            color: 'var(--color-error)',
-            fontFamily: 'var(--font-family-body)',
+            fontSize: "var(--font-size-small)",
+            color: "var(--color-error)",
+            fontFamily: "var(--font-family-body)",
           }}
         >
           {error}
@@ -50,4 +56,3 @@ export function TextArea({ label, error, style, ...props }: TextAreaProps) {
     </div>
   );
 }
-
