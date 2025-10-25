@@ -1,0 +1,8 @@
+{
+  "routes": {
+    "/*": "/index.html",
+    "/dashboard": "/index.html",
+    "/:username": "/index.html",
+    "/create": "/index.html"
+  }
+}

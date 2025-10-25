@@ -1,8 +1,7 @@
 {
   "routes": {
-    "/": "/index.html",
+    "/*": "/index.html",
     "/create": "/index.html",
-    "/dashboard": "/index.html",
-    "/*": "/index.html"
+    "/": "/index.html"
   }
 }

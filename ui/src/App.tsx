@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { Header } from "./components/layout/Header";
 import { HomePage } from "./routes/HomePage";
-import { ProfilePage } from "./routes/ProfilePage";
+// import { ProfilePage } from "./routes/ProfilePage";
 import { CreatePage } from "./routes/CreatePage";
 import { DashboardPage } from "./routes/DashboardPage";
 import { NotFoundPage } from "./routes/NotFoundPage";
@@ -24,8 +24,8 @@ function App() {
       >
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/:username" element={<HomePage />} />
           <Route path="/nft-test" element={<NFTTestPage />} />
-          <Route path="/:username" element={<ProfilePage />} />
           <Route
             path="/create"
             element={

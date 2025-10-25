@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { useCurrentAccount, useSignAndExecuteTransaction, useSuiClient } from "@mysten/dapp-kit";
+import {
+  useCurrentAccount,
+  useSignAndExecuteTransaction,
+  useSuiClient,
+} from "@mysten/dapp-kit";
 import { Transaction } from "@mysten/sui/transactions";
 import { bcs } from "@mysten/sui/bcs";
 import { Card } from "../components/ui/Card";
@@ -8,8 +12,10 @@ import { Input } from "../components/ui/Input";
 import toast from "react-hot-toast";
 
 // ✅ Deployed on Sui Testnet (Updated with is_profile_photo)
-const NFT_REGISTRY_PACKAGE_ID = "0xbf0f12628a279d56b15889ddac0ff0d9ba327b8e637ef82bdbbad17f8ca67505";
-const NFT_REGISTRY_OBJECT_ID = "0xd20e480fa168b33285824acc2011325311377a2ecee45bb6cf2e5bd65a09ca09";
+const NFT_REGISTRY_PACKAGE_ID =
+  "0xbf0f12628a279d56b15889ddac0ff0d9ba327b8e637ef82bdbbad17f8ca67505";
+const NFT_REGISTRY_OBJECT_ID =
+  "0xd20e480fa168b33285824acc2011325311377a2ecee45bb6cf2e5bd65a09ca09";
 
 interface NFTItem {
   nft_url: string;
@@ -103,7 +109,9 @@ export function NFTTestPage() {
 
       const result = await client.devInspectTransactionBlock({
         transactionBlock: tx,
-        sender: currentAccount?.address || "0x0000000000000000000000000000000000000000000000000000000000000000",
+        sender:
+          currentAccount?.address ||
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
       });
 
       console.log("📦 Raw NFT data:", result);
@@ -140,7 +148,6 @@ export function NFTTestPage() {
           setFetchedNFTs([]);
         }
       } else {
-        toast.info("No NFTs found or unable to parse");
         setFetchedNFTs([]);
       }
     } catch (error: any) {
@@ -148,7 +155,6 @@ export function NFTTestPage() {
 
       // Check if it's "not found" error
       if (error?.message?.includes("field does not exist")) {
-        toast.info("No NFTs found for this username");
         setFetchedNFTs([]);
       } else {
         toast.error("Failed to fetch NFTs");
@@ -170,7 +176,11 @@ export function NFTTestPage() {
       return;
     }
 
-    if (!window.confirm(`Are you sure you want to clear all NFTs for ${username}?`)) {
+    if (
+      !window.confirm(
+        `Are you sure you want to clear all NFTs for ${username}?`,
+      )
+    ) {
       return;
     }
 
@@ -224,7 +234,13 @@ export function NFTTestPage() {
       </div>
 
       <Card>
-        <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-l)" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "var(--spacing-l)",
+          }}
+        >
           {/* Header */}
           <div>
             <h2
@@ -288,7 +304,11 @@ export function NFTTestPage() {
             <Input
               placeholder="e.g., usain-bolt"
               value={username}
-              onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
+              onChange={(e) =>
+                setUsername(
+                  e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""),
+                )
+              }
               disabled={loading}
             />
           </div>
@@ -314,7 +334,13 @@ export function NFTTestPage() {
               Add NFT
             </h3>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-m)" }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "var(--spacing-m)",
+              }}
+            >
               <div>
                 <label
                   style={{
@@ -416,7 +442,9 @@ export function NFTTestPage() {
 
               <Button
                 onClick={handleAddNFT}
-                disabled={loading || !currentAccount || !username || !nftUrl || !title}
+                disabled={
+                  loading || !currentAccount || !username || !nftUrl || !title
+                }
                 loading={loading}
                 variant="accent"
               >
@@ -426,7 +454,13 @@ export function NFTTestPage() {
           </div>
 
           {/* Actions */}
-          <div style={{ display: "flex", gap: "var(--spacing-m)", flexWrap: "wrap" }}>
+          <div
+            style={{
+              display: "flex",
+              gap: "var(--spacing-m)",
+              flexWrap: "wrap",
+            }}
+          >
             <Button
               onClick={handleFetchNFTs}
               disabled={loading || !username}
@@ -467,7 +501,13 @@ export function NFTTestPage() {
                 Fetched NFTs ({fetchedNFTs.length})
               </h3>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-m)" }}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "var(--spacing-m)",
+                }}
+              >
                 {fetchedNFTs.map((nft, index) => (
                   <div
                     key={index}
@@ -536,7 +576,9 @@ export function NFTTestPage() {
                       <strong>Profile Photo:</strong>{" "}
                       <span
                         style={{
-                          color: nft.is_profile_photo ? "var(--color-brand-primary)" : "var(--color-text-muted)",
+                          color: nft.is_profile_photo
+                            ? "var(--color-brand-primary)"
+                            : "var(--color-text-muted)",
                           fontWeight: "var(--font-weight-medium)",
                         }}
                       >

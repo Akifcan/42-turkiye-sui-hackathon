@@ -1,9 +1,16 @@
 import { useCurrentAccount } from "@mysten/dapp-kit";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Button } from "../components/ui/Button";
+import { ProfilePage } from "./ProfilePage";
 
 export function HomePage() {
   const currentAccount = useCurrentAccount();
+  const { username } = useParams();
+
+  // If username parameter exists, render ProfilePage
+  if (username) {
+    return <ProfilePage />;
+  }
 
   return (
     <div
