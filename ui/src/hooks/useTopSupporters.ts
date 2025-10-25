@@ -42,7 +42,10 @@ export const useTopSupporters = (profileOwnerAddress: string | null) => {
           // Look for SUI balance increases (incoming transfers)
           const suiReceived = txn.balanceChanges.filter(
             (change) =>
-              change.owner?.AddressOwner === profileOwnerAddress &&
+              typeof change.owner === "object" &&
+              change.owner !== null &&
+              "AddressOwner" in change.owner &&
+              change.owner.AddressOwner === profileOwnerAddress &&
               change.coinType === "0x2::sui::SUI" &&
               BigInt(change.amount) > 0,
           );
