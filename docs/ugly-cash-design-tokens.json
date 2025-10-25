@@ -1,0 +1,283 @@
+{
+  "color": {
+    "background-base": {
+      "$value": "rgb(242, 242, 242)",
+      "$type": "color"
+    },
+    "text-primary": {
+      "$value": "rgb(0, 0, 0)",
+      "$type": "color"
+    },
+    "brand-primary": {
+      "$value": "rgb(255, 255, 255)",
+      "$type": "color"
+    },
+    "accent-1": {
+      "$value": "rgb(205, 185, 174)",
+      "$type": "color"
+    },
+    "accent-2": {
+      "$value": "rgb(236, 15, 235)",
+      "$type": "color"
+    },
+    "accent-3": {
+      "$value": "rgb(17, 40, 186)",
+      "$type": "color"
+    },
+    "accent-4": {
+      "$value": "rgb(7, 191, 217)",
+      "$type": "color"
+    },
+    "accent-5": {
+      "$value": "rgb(234, 67, 29)",
+      "$type": "color"
+    }
+  },
+  "font": {
+    "family": {
+      "family-1": {
+        "$value": "var(--framer-blockquote-font-family-bold-italic, var(--framer-font-family-bold-italic))",
+        "$type": "fontFamily"
+      },
+      "family-2": {
+        "$value": "var(--framer-blockquote-font-family-bold, var(--framer-font-family-bold))",
+        "$type": "fontFamily"
+      },
+      "family-3": {
+        "$value": "var(--font-family)",
+        "$type": "fontFamily"
+      },
+      "family-4": {
+        "$value": "Roboto, \"Roboto Placeholder\", sans-serif",
+        "$type": "fontFamily"
+      },
+      "family-5": {
+        "$value": "var(--framer-blockquote-font-family-italic, var(--framer-font-family-italic))",
+        "$type": "fontFamily"
+      },
+      "family-6": {
+        "$value": "sans-serif",
+        "$type": "fontFamily"
+      }
+    },
+    "size": {
+      "xs": {
+        "$value": "12px",
+        "$type": "fontSize"
+      },
+      "s": {
+        "$value": "12px",
+        "$type": "fontSize"
+      },
+      "m": {
+        "$value": "12px",
+        "$type": "fontSize"
+      },
+      "l": {
+        "$value": "14px",
+        "$type": "fontSize"
+      }
+    },
+    "weight": {
+      "weight-1": {
+        "$value": "400",
+        "$type": "fontWeight"
+      }
+    }
+  },
+  "spacing": {
+    "xs": {
+      "$value": "8px",
+      "$type": "spacing"
+    },
+    "s": {
+      "$value": "10px",
+      "$type": "spacing"
+    },
+    "m": {
+      "$value": "19px",
+      "$type": "spacing"
+    },
+    "l": {
+      "$value": "20px",
+      "$type": "spacing"
+    },
+    "xl": {
+      "$value": "24px",
+      "$type": "spacing"
+    },
+    "xxl": {
+      "$value": "34px",
+      "$type": "spacing"
+    }
+  },
+  "sizing": {
+    "xs": {
+      "$value": "23px",
+      "$type": "sizing"
+    },
+    "s": {
+      "$value": "111px",
+      "$type": "sizing"
+    },
+    "m": {
+      "$value": "197px",
+      "$type": "sizing"
+    },
+    "l": {
+      "$value": "304px",
+      "$type": "sizing"
+    },
+    "xl": {
+      "$value": "408px",
+      "$type": "sizing"
+    },
+    "xxl": {
+      "$value": "486px",
+      "$type": "sizing"
+    },
+    "3xl": {
+      "$value": "595px",
+      "$type": "sizing"
+    },
+    "4xl": {
+      "$value": "817px",
+      "$type": "sizing"
+    },
+    "5xl": {
+      "$value": "1224px",
+      "$type": "sizing"
+    },
+    "6xl": {
+      "$value": "6116px",
+      "$type": "sizing"
+    }
+  },
+  "borderWidth": {},
+  "radii": {
+    "xs": {
+      "$value": "16px",
+      "$type": "borderRadius"
+    }
+  },
+  "headings": {},
+  "buttons": {},
+  "sections": [
+    {
+      "section_id": "div-0",
+      "components": {}
+    },
+    {
+      "section_id": "div-1",
+      "components": {}
+    },
+    {
+      "section_id": "div-2",
+      "components": {}
+    },
+    {
+      "section_id": "div-3",
+      "components": {}
+    },
+    {
+      "section_id": "div-4",
+      "components": {}
+    },
+    {
+      "section_id": "div-5",
+      "components": {}
+    },
+    {
+      "section_id": "div-6",
+      "components": {}
+    },
+    {
+      "section_id": "div-7",
+      "components": {}
+    },
+    {
+      "section_id": "div-8",
+      "components": {}
+    },
+    {
+      "section_id": "div-9",
+      "components": {}
+    },
+    {
+      "section_id": "div-10",
+      "components": {}
+    },
+    {
+      "section_id": "div-11",
+      "components": {}
+    },
+    {
+      "section_id": "div-12",
+      "components": {}
+    },
+    {
+      "section_id": "div-13",
+      "components": {}
+    },
+    {
+      "section_id": "div-14",
+      "components": {}
+    },
+    {
+      "section_id": "div-15",
+      "components": {}
+    },
+    {
+      "section_id": "div-16",
+      "components": {}
+    },
+    {
+      "section_id": "div-17",
+      "components": {}
+    },
+    {
+      "section_id": "div-18",
+      "components": {}
+    },
+    {
+      "section_id": "div-19",
+      "components": {}
+    },
+    {
+      "section_id": "div-20",
+      "components": {}
+    },
+    {
+      "section_id": "div-21",
+      "components": {}
+    },
+    {
+      "section_id": "div-22",
+      "components": {}
+    },
+    {
+      "section_id": "div-23",
+      "components": {}
+    },
+    {
+      "section_id": "div-24",
+      "components": {}
+    },
+    {
+      "section_id": "div-25",
+      "components": {}
+    },
+    {
+      "section_id": "div-26",
+      "components": {}
+    }
+  ],
+  "layout": {
+    "container": {
+      "max-width": {
+        "$value": "{spacing.xxl}",
+        "$type": "sizing"
+      }
+    }
+  }
+}

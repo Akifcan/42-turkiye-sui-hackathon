@@ -17,6 +17,16 @@ import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 // ⚠️ DEMO ONLY: Replace with your sponsor keypair
 const DEMO_SPONSOR_PRIVATE_KEY = "YOUR_BASE64_PRIVATE_KEY_HERE"; // Get from env or generate
 
+// Helper to convert base64 to Uint8Array for browser environment
+function base64ToUint8Array(base64: string): Uint8Array {
+  const binaryString = atob(base64);
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return bytes;
+}
+
 export function useSponsoredTransactionSimple() {
   const suiClient = useSuiClient();
   const { mutateAsync: signTransaction } = useSignTransaction();
@@ -25,7 +35,7 @@ export function useSponsoredTransactionSimple() {
     try {
       // Create sponsor keypair from private key
       const sponsorKeypair = Ed25519Keypair.fromSecretKey(
-        Buffer.from(DEMO_SPONSOR_PRIVATE_KEY, 'base64')
+        base64ToUint8Array(DEMO_SPONSOR_PRIVATE_KEY)
       );
       const sponsorAddress = sponsorKeypair.getPublicKey().toSuiAddress();
 

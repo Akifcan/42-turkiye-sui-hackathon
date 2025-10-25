@@ -17,8 +17,8 @@ export function useProfileData() {
   const [error, setError] = useState("");
 
   const fetchProfile = async (username: string): Promise<ProfileData> => {
-    if (!username || !currentAccount) {
-      throw new Error("Username and account are required");
+    if (!username) {
+      throw new Error("Username is required");
     }
 
     setLoading(true);
@@ -28,6 +28,9 @@ export function useProfileData() {
       let profile: AboutProfile | null = null;
       let links: SocialLink[] = [];
       let nfts: NFTItem[] = [];
+
+      // Use a dummy address for devInspect if no wallet is connected (viewing public profiles)
+      const senderAddress = currentAccount?.address || "0x0000000000000000000000000000000000000000000000000000000000000000";
 
       // 1. Fetch About Profile
       const aboutTx = new Transaction();
@@ -41,7 +44,7 @@ export function useProfileData() {
 
       const aboutResult = await suiClient.devInspectTransactionBlock({
         transactionBlock: aboutTx,
-        sender: currentAccount.address,
+        sender: senderAddress,
       });
 
       if (aboutResult.results && aboutResult.results[0] && aboutResult.results[0].returnValues) {
@@ -82,7 +85,7 @@ export function useProfileData() {
 
       const linksResult = await suiClient.devInspectTransactionBlock({
         transactionBlock: linksTx,
-        sender: currentAccount.address,
+        sender: senderAddress,
       });
 
       if (linksResult.results && linksResult.results[0] && linksResult.results[0].returnValues) {
@@ -122,7 +125,7 @@ export function useProfileData() {
 
       const nftsResult = await suiClient.devInspectTransactionBlock({
         transactionBlock: nftsTx,
-        sender: currentAccount.address,
+        sender: senderAddress,
       });
 
       if (nftsResult.results && nftsResult.results[0] && nftsResult.results[0].returnValues) {
