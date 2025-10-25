@@ -7,6 +7,7 @@ module suilink::nft_list {
         nft_url: String,
         title: String,
         description: String,
+        is_profile_photo: bool,
     }
 
     // List of NFT items
@@ -34,11 +35,13 @@ module suilink::nft_list {
         nft_url: String,
         title: String,
         description: String,
+        is_profile_photo: bool,
     ) {
         let new_nft = NFTItem {
             nft_url,
             title,
             description,
+            is_profile_photo,
         };
 
         // Check if user already has a list
@@ -98,5 +101,9 @@ module suilink::nft_list {
 
     public fun get_description(nft: &NFTItem): String {
         nft.description
+    }
+
+    public fun get_is_profile_photo(nft: &NFTItem): bool {
+        nft.is_profile_photo
     }
 }

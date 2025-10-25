@@ -5,6 +5,7 @@ import { ProfilePage } from "./routes/ProfilePage";
 import { CreatePage } from "./routes/CreatePage";
 import { DashboardPage } from "./routes/DashboardPage";
 import { NotFoundPage } from "./routes/NotFoundPage";
+import { NFTTestPage } from "./routes/NFTTestPage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
       >
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/nft-test" element={<NFTTestPage />} />
           <Route path="/:username" element={<ProfilePage />} />
           <Route
             path="/create"
