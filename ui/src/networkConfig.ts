@@ -4,6 +4,7 @@ import {
   TESTNET_SUILINK_PACKAGE_ID,
   TESTNET_REGISTRY_ID,
   TESTNET_LIST_REGISTRY_ID,
+  TESTNET_NFT_REGISTRY_ID,
 } from "./constants.ts";
 import { createNetworkConfig } from "@mysten/dapp-kit";
 
@@ -16,6 +17,7 @@ const { networkConfig, useNetworkVariable, useNetworkVariables } =
         suilinkPackageId: TESTNET_SUILINK_PACKAGE_ID,
         registryId: TESTNET_REGISTRY_ID,
         listRegistryId: TESTNET_LIST_REGISTRY_ID,
+        nftRegistryId: TESTNET_NFT_REGISTRY_ID,
       },
     },
   });

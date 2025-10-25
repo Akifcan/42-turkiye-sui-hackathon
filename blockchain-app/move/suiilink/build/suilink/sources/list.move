@@ -1,7 +1,6 @@
 module suilink::list {
     use std::string::String;
     use sui::dynamic_field;
-    use std::vector;
 
     // Social link struct
     public struct SocialLink has store, drop, copy {

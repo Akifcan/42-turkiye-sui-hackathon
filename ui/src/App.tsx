@@ -6,6 +6,7 @@ import { Greeting } from './Greeting';
 import { CreateGreeting } from "./CreateGreeting";
 import { CreateAbout } from "./CreateAbout";
 import { AddSocialLink } from "./AddSocialLink";
+import { AddNFT } from "./AddNFT";
 import { ViewProfile } from "./ViewProfile";
 
 function App() {
@@ -71,6 +72,10 @@ function App() {
 
               <Box style={{ borderTop: "1px solid var(--gray-a4)", paddingTop: "2rem" }}>
                 <AddSocialLink />
+              </Box>
+
+              <Box style={{ borderTop: "1px solid var(--gray-a4)", paddingTop: "2rem" }}>
+                <AddNFT />
               </Box>
 
               <Box style={{ borderTop: "1px solid var(--gray-a4)", paddingTop: "2rem" }}>

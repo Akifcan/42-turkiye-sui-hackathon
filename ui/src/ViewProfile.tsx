@@ -1,6 +1,6 @@
 import { Transaction } from "@mysten/sui/transactions";
 import { Button, Container, TextField, Flex, Text, Card, Box, Separator } from "@radix-ui/themes";
-import { useSuiClient, useCurrentAccount } from "@mysten/dapp-kit";
+import { useSuiClient, useCurrentAccount, useSignAndExecuteTransaction } from "@mysten/dapp-kit";
 import { useNetworkVariable } from "./networkConfig";
 import { useState } from "react";
 import { ClipLoader } from "react-spinners";
@@ -20,18 +20,34 @@ interface SocialLink {
   iconurl: string;
 }
 
+interface NFTItem {
+  nft_url: string;
+  title: string;
+  description: string;
+}
+
 export function ViewProfile() {
   const suilinkPackageId = useNetworkVariable("suilinkPackageId");
   const registryId = useNetworkVariable("registryId");
   const listRegistryId = useNetworkVariable("listRegistryId");
+  const nftRegistryId = useNetworkVariable("nftRegistryId");
   const suiClient = useSuiClient();
   const currentAccount = useCurrentAccount();
+  const { mutate: signAndExecute } = useSignAndExecuteTransaction();
 
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [profile, setProfile] = useState<AboutProfile | null>(null);
   const [links, setLinks] = useState<SocialLink[]>([]);
+  const [nfts, setNfts] = useState<NFTItem[]>([]);
   const [error, setError] = useState("");
+  
+  // NFT Ekleme için state'ler
+  const [addingNFT, setAddingNFT] = useState(false);
+  const [showNFTForm, setShowNFTForm] = useState(false);
+  const [nftUrl, setNftUrl] = useState("");
+  const [nftTitle, setNftTitle] = useState("");
+  const [nftDescription, setNftDescription] = useState("");
 
   const fetchProfile = async () => {
     if (!username || !currentAccount) return;
@@ -40,6 +56,7 @@ export function ViewProfile() {
     setError("");
     setProfile(null);
     setLinks([]);
+    setNfts([]);
 
     try {
       // 1. Fetch About Profile
@@ -145,7 +162,56 @@ export function ViewProfile() {
         }
       }
 
-      if (!profile && links.length === 0) {
+      // 3. Fetch NFT List
+      const nftsTx = new Transaction();
+      nftsTx.moveCall({
+        arguments: [
+          nftsTx.object(nftRegistryId),
+          nftsTx.pure.string(username),
+        ],
+        target: `${suilinkPackageId}::nft_list::get_nfts`,
+      });
+
+      const nftsResult = await suiClient.devInspectTransactionBlock({
+        transactionBlock: nftsTx,
+        sender: currentAccount.address,
+      });
+
+      console.log("NFTs DevInspect Result:", nftsResult);
+
+      // Parse NFTs
+      if (nftsResult.results && nftsResult.results[0] && nftsResult.results[0].returnValues) {
+        const returnValues = nftsResult.results[0].returnValues;
+        if (returnValues && returnValues[0]) {
+          const [bytes] = returnValues[0];
+
+          try {
+            const NFTItemStruct = bcs.struct('NFTItem', {
+              nft_url: bcs.string(),
+              title: bcs.string(),
+              description: bcs.string(),
+            });
+
+            const NFTItemsVector = bcs.vector(NFTItemStruct);
+            const parsedNFTs = NFTItemsVector.parse(new Uint8Array(bytes));
+
+            console.log("✅ Parsed NFTs:", parsedNFTs);
+
+            const nftItems: NFTItem[] = parsedNFTs.map((nft: any) => ({
+              nft_url: nft.nft_url,
+              title: nft.title,
+              description: nft.description,
+            }));
+
+            setNfts(nftItems);
+            console.log(`✅ Found ${nftItems.length} NFT(s)!`);
+          } catch (parseError) {
+            console.log("No NFTs found or parse error:", parseError);
+          }
+        }
+      }
+
+      if (!profile && links.length === 0 && nfts.length === 0) {
         setError("Profile not found for this username");
       }
 
@@ -155,6 +221,59 @@ export function ViewProfile() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const addNFT = () => {
+    if (!currentAccount || !username || !nftUrl || !nftTitle) {
+      setError("Please fill in all required fields (URL and Title)");
+      return;
+    }
+
+    setAddingNFT(true);
+    setError("");
+
+    const tx = new Transaction();
+    
+    tx.moveCall({
+      arguments: [
+        tx.object(nftRegistryId),
+        tx.pure.string(username),
+        tx.pure.string(nftUrl),
+        tx.pure.string(nftTitle),
+        tx.pure.string(nftDescription || ""),
+      ],
+      target: `${suilinkPackageId}::nft_list::add_nft`,
+    });
+
+    signAndExecute(
+      {
+        transaction: tx,
+      },
+      {
+        onSuccess: (result) => {
+          suiClient
+            .waitForTransaction({ digest: result.digest, options: { showEffects: true } })
+            .then(() => {
+              console.log("✅ NFT added successfully!");
+              
+              // Form'u temizle
+              setNftUrl("");
+              setNftTitle("");
+              setNftDescription("");
+              setShowNFTForm(false);
+              setAddingNFT(false);
+              
+              // Profili yeniden fetch et
+              fetchProfile();
+            });
+        },
+        onError: (error) => {
+          console.error("❌ Failed to add NFT:", error);
+          setError(error.message || "Failed to add NFT");
+          setAddingNFT(false);
+        },
+      },
+    );
   };
 
   return (
@@ -197,7 +316,7 @@ export function ViewProfile() {
           </Card>
         )}
 
-        {(profile || links.length > 0) && (
+        {(profile || links.length > 0 || nfts.length > 0) && (
           <Flex direction="column" gap="4">
             {/* About Section */}
             {profile && (
@@ -274,6 +393,126 @@ export function ViewProfile() {
                     </Flex>
                   </Card>
                 ))}
+              </Flex>
+            )}
+
+            {/* NFT Section */}
+            {(nfts.length > 0 || (profile && currentAccount)) && (
+              <Flex direction="column" gap="3">
+                <Separator size="4" />
+                <Flex justify="between" align="center">
+                  <Text size="5" weight="bold">NFT Collection ({nfts.length})</Text>
+                  {profile && currentAccount && (
+                    <Button
+                      size="2"
+                      variant="soft"
+                      onClick={() => setShowNFTForm(!showNFTForm)}
+                    >
+                      {showNFTForm ? "Cancel" : "+ Add NFT"}
+                    </Button>
+                  )}
+                </Flex>
+
+                {/* NFT Ekleme Formu */}
+                {showNFTForm && (
+                  <Card style={{ padding: "1.5rem", backgroundColor: "var(--green-a2)" }}>
+                    <Flex direction="column" gap="3">
+                      <Text size="4" weight="bold" color="green">Add New NFT</Text>
+                      
+                      <Flex direction="column" gap="2">
+                        <Text size="2" weight="medium">NFT URL *</Text>
+                        <TextField.Root
+                          placeholder="https://example.com/nft-image.png"
+                          value={nftUrl}
+                          onChange={(e) => setNftUrl(e.target.value)}
+                          disabled={addingNFT}
+                          size="2"
+                        />
+                      </Flex>
+
+                      <Flex direction="column" gap="2">
+                        <Text size="2" weight="medium">Title *</Text>
+                        <TextField.Root
+                          placeholder="My Amazing NFT"
+                          value={nftTitle}
+                          onChange={(e) => setNftTitle(e.target.value)}
+                          disabled={addingNFT}
+                          size="2"
+                        />
+                      </Flex>
+
+                      <Flex direction="column" gap="2">
+                        <Text size="2" weight="medium">Description</Text>
+                        <TextField.Root
+                          placeholder="Optional description"
+                          value={nftDescription}
+                          onChange={(e) => setNftDescription(e.target.value)}
+                          disabled={addingNFT}
+                          size="2"
+                        />
+                      </Flex>
+
+                      <Button
+                        size="3"
+                        onClick={addNFT}
+                        disabled={addingNFT || !nftUrl || !nftTitle}
+                        style={{ width: "100%" }}
+                      >
+                        {addingNFT ? <ClipLoader size={20} color="white" /> : "Add NFT"}
+                      </Button>
+                    </Flex>
+                  </Card>
+                )}
+
+                {/* NFT Grid */}
+                {nfts.length > 0 && (
+                  <Box style={{ 
+                    display: "grid", 
+                    gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", 
+                    gap: "1rem" 
+                  }}>
+                    {nfts.map((nft, index) => (
+                      <Card key={index} style={{ padding: "1rem", backgroundColor: "var(--gray-a2)" }}>
+                        <Flex direction="column" gap="2">
+                          {nft.nft_url && (
+                            <Box style={{ 
+                              width: "100%", 
+                              height: 200, 
+                              backgroundColor: "var(--gray-a4)",
+                              borderRadius: "8px",
+                              overflow: "hidden"
+                            }}>
+                              <img
+                                src={nft.nft_url}
+                                alt={nft.title}
+                                style={{ 
+                                  width: "100%", 
+                                  height: "100%", 
+                                  objectFit: "cover" 
+                                }}
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).style.display = 'none';
+                                }}
+                              />
+                            </Box>
+                          )}
+                          
+                          <Text size="4" weight="bold">{nft.title}</Text>
+                          
+                          {nft.description && (
+                            <Text size="2" color="gray">{nft.description}</Text>
+                          )}
+                        </Flex>
+                      </Card>
+                    ))}
+                  </Box>
+                )}
+
+                {nfts.length === 0 && profile && !showNFTForm && (
+                  <Card style={{ padding: "2rem", textAlign: "center", backgroundColor: "var(--gray-a2)" }}>
+                    <Text size="2" color="gray">No NFTs yet. Click "+ Add NFT" to add your first NFT!</Text>
+                  </Card>
+                )}
               </Flex>
             )}
           </Flex>
