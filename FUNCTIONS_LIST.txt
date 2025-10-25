@@ -1,0 +1,135 @@
+list.move
+
+DEPLOY ETME
+
+sui client publish
+
+--
+
+LİSTE OLUŞTURMA:
+
+sui client call --package PAKET_ID --module list --function create_list 
+sui client call --package 0x13e8cf2913377f0e86ea9ddf7639213d882d1c35a487a65b9b62543ae01622cf --module list --function create_list 
+
+--
+
+LİSTEYE EKLEME YAPMAK İÇİN
+
+ÖRNEK:
+
+sui client call \                                                                   
+    --package PAKET_ID \
+    --module list \
+    --function add_link \
+    --args OBJECT_ID "https://twitter.com/akif" "Twitter" "Takip et" "https://mysite.com" \
+    --gas-budget 10000000
+
+sui client call \                                                                   
+    --package 0x13e8cf2913377f0e86ea9ddf7639213d882d1c35a487a65b9b62543ae01622cf \
+    --module list \
+    --function add_link \
+    --args 0x4ed2e4e8647c877997ebbc351da8da620a853ea07b2b9dcdd499b1fc44a62362 "https://twitter.com/akif" "Twitter" "Takip et" "https://mysite.com" \
+    --gas-budget 10000000
+
+--
+
+TÜM LİNKLERİ ÇEKMEK İÇİN
+
+ÖRNEK: 
+sui client object 0x4ed2e4e8647c877997ebbc351da8da620a853ea07b2b9dcdd499b1fc44a62362
+sui client object OBJECT_ID
+
+--
+
+Frontend'de nasıl çağırırsın:
+
+  import { Transaction } from '@mysten/sui/transactions';
+  import { useSignAndExecuteTransaction, useSuiClient } from '@mysten/dapp-kit';
+
+  const PACKAGE_ID = '0x13e8cf2913377f0e86ea9ddf7639213d882d1c35a487a65b9b62543ae01622cf';
+
+  // 1. LİSTE OLUŞTURMA (create_list)
+  function CreateListButton() {
+    const { mutate: signAndExecute } = useSignAndExecuteTransaction();
+
+    const handleCreateList = () => {
+      const tx = new Transaction();
+
+      tx.moveCall({
+        target: `${PACKAGE_ID}::list::create_list`,
+      });
+
+      signAndExecute({
+        transaction: tx,
+      }, {
+        onSuccess: (result) => {
+          console.log('LinkList oluşturuldu!', result);
+        }
+      });
+    };
+
+    return <button onClick={handleCreateList}>Liste Oluştur</button>;
+  }
+
+  // 2. LİNK EKLEME (add_link)
+  function AddLinkButton({ listId }) {
+    const { mutate: signAndExecute } = useSignAndExecuteTransaction();
+
+    const handleAddLink = () => {
+      const tx = new Transaction();
+
+      tx.moveCall({
+        target: `${PACKAGE_ID}::list::add_link`,
+        arguments: [
+          tx.object(listId), // LinkList object ID
+          tx.pure.string('https://twitter.com/akif'),
+          tx.pure.string('Twitter'),
+          tx.pure.string('Takip et'),
+          tx.pure.string('https://mysite.com'),
+        ],
+      });
+
+      signAndExecute({
+        transaction: tx,
+      }, {
+        onSuccess: (result) => {
+          console.log('Link eklendi!', result);
+        }
+      });
+    };
+
+    return <button onClick={handleAddLink}>Link Ekle</button>;
+  }
+
+  // 3. TÜM LİNKLERİ ÇEKMEK (get_link)
+  function LinksList({ listId }) {
+    const client = useSuiClient();
+    const [links, setLinks] = React.useState([]);
+
+    React.useEffect(() => {
+      async function fetchLinks() {
+        const object = await client.getObject({
+          id: listId,
+          options: { showContent: true }
+        });
+
+        const linksList = object.data.content.fields.links;
+        setLinks(linksList);
+      }
+
+      fetchLinks();
+    }, [listId]);
+
+    return (
+      <div>
+        {links.map((link, index) => (
+          <div key={index}>
+            <h3>{link.title}</h3>
+            <p>{link.description}</p>
+            <a href={link.url}>{link.url}</a>
+            <a href={link.site_url}>{link.site_url}</a>
+          </div>
+        ))}
+      </div>
+    );
+  }

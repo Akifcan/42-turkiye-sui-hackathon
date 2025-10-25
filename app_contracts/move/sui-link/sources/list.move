@@ -1,77 +1,59 @@
-// Copyright (c) Mysten Labs, Inc.
-// SPDX-License-Identifier: Apache-2.0
-
-/// This module allows users to create and manage their link list (similar to Linktree)
 module suilink::list {
-  use std::string::String;
-  use sui::table::{Self, Table};
+    use std::string::String;
 
-  /// Individual link structure
-  public struct Link has store, copy, drop {
-    link: String,        // URL
-    site_name: String,   // Site name
-    icon_url: String,    // Icon URL
-    description: String, // Link description
-  }
-
-  /// Global registry that stores all users' link lists
-  public struct GlobalRegistry has key {
-    id: UID,
-    // Maps user address to their links
-    user_links: Table<address, vector<Link>>,
-  }
-
-  /// Initialize the global registry when package is published
-  /// This runs automatically only once during deployment
-  fun init(ctx: &mut TxContext) {
-    let registry = GlobalRegistry {
-      id: object::new(ctx),
-      user_links: table::new(ctx),
-    };
-    // Share the registry so everyone can access it
-    transfer::share_object(registry);
-  }
-
-  /// Add a new link to the user's list in the global registry
-  public entry fun add_link(
-    registry: &mut GlobalRegistry,
-    link: String,
-    site_name: String,
-    icon_url: String,
-    description: String,
-    ctx: &mut TxContext,
-  ) {
-    let sender = ctx.sender();
-    let new_link = Link {
-      link,
-      site_name,
-      icon_url,
-      description,
-    };
-
-    // Check if user already has a link list
-    if (table::contains(&registry.user_links, sender)) {
-      let user_links = table::borrow_mut(&mut registry.user_links, sender);
-      vector::push_back(user_links, new_link);
-    } else {
-      // Create new vector for first link
-      let mut new_vector = vector::empty<Link>();
-      vector::push_back(&mut new_vector, new_link);
-      table::add(&mut registry.user_links, sender, new_vector);
+    // Link structure with URL, title, description, and site URL
+    public struct Link has store, copy, drop {
+        url: String,
+        title: String,
+        description: String,
+        site_url: String,
     }
-  }
 
-  /// Get all links for a specific user
-  public fun get_links(registry: &GlobalRegistry, user: address): vector<Link> {
-    if (table::contains(&registry.user_links, user)) {
-      *table::borrow(&registry.user_links, user)
-    } else {
-      vector::empty<Link>()
+    // LinkList - a shared object containing an array of links
+    public struct LinkList has key, store {
+        id: UID,
+        links: vector<Link>,
+        owner: address,
     }
-  }
 
-  /// Get the caller's own links
-  public fun get_my_links(registry: &GlobalRegistry, ctx: &TxContext): vector<Link> {
-    get_links(registry, ctx.sender())
-  }
+    // Create a new link list and share it
+    public entry fun create_list(ctx: &mut TxContext) {
+        let list = LinkList {
+            id: object::new(ctx),
+            links: vector::empty(),
+            owner: tx_context::sender(ctx),
+        };
+        transfer::share_object(list);
+    }
+
+    // Add a link to the list
+    public entry fun add_link(
+        list: &mut LinkList,
+        url: String,
+        title: String,
+        description: String,
+        site_url: String,
+        ctx: &TxContext
+    ) {
+        assert!(list.owner == tx_context::sender(ctx), 0); // Only owner can add links
+
+        let link = Link {
+            url,
+            title,
+            description,
+            site_url,
+        };
+
+        vector::push_back(&mut list.links, link);
+    }
+
+    // Get the number of links in the list
+    public fun get_link_count(list: &LinkList): u64 {
+        vector::length(&list.links)
+    }
+
+    // Get a specific link by index
+    public fun get_link(list: &LinkList, index: u64): &Link {
+        vector::borrow(&list.links, index)
+    }
 }
