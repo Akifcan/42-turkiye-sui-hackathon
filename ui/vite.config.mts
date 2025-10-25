@@ -12,22 +12,6 @@ export default defineConfig({
     // Optimize for Walrus Sites deployment
     outDir: 'dist',
     assetsDir: 'assets',
-    // Ensure proper chunking for better caching
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
-              return 'vendor';
-            }
-            if (id.includes('@mysten')) {
-              return 'sui';
-            }
-            return 'vendor-other';
-          }
-        },
-      },
-    },
   },
   // Enable SPA fallback for client-side routing
   preview: {
