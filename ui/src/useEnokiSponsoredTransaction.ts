@@ -2,7 +2,8 @@ import { Transaction } from "@mysten/sui/transactions";
 import { useCurrentAccount, useSuiClient, useSignTransaction } from "@mysten/dapp-kit";
 import { useState } from "react";
 
-const BACKEND_API_URL = 'http://localhost:3001';
+const BACKEND_API_URL = 'https://four2-turkiye-sui-hackathon.onrender.com';
+// const BACKEND_API_URL = 'http://localhost:3001';
 const USE_SPONSORED_TRANSACTIONS = true; // ⚠️ Enoki allow-list manual approval gerektirir (1-7 gün)
 
 /**
