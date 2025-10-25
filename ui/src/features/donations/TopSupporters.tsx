@@ -21,11 +21,19 @@ const TopSupporters: React.FC<TopSupportersProps> = ({
       >
         Top Supporters
       </h3>
-      {isLoading && <p>Loading supporters...</p>}
-      {error && <p style={{ color: "var(--color-error)" }}>Error: {error}</p>}
+      {isLoading && (
+        <p style={{ color: "var(--color-text-secondary)" }}>
+          Loading supporters...
+        </p>
+      )}
+      {error && (
+        <p style={{ color: "var(--color-text-secondary)", fontSize: "14px" }}>
+          💡 Supporter leaderboard coming soon! (Smart contract module pending)
+        </p>
+      )}
       {!isLoading && !error && supporters.length === 0 && (
         <p style={{ color: "var(--color-text-secondary)" }}>
-          No supporters yet.
+          🏆 Support this athlete to appear on the leaderboard!
         </p>
       )}
       {!isLoading && !error && supporters.length > 0 && (

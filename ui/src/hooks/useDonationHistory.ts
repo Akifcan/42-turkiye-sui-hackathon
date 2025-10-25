@@ -1,12 +1,10 @@
 import { useSuiClient } from "@mysten/dapp-kit";
 import { useEffect, useState } from "react";
-import { useNetworkVariable } from "../networkConfig";
 
-// Assuming a structure for donation events from your smart contract
 interface DonationEvent {
   donor: string;
-  amount: string; // Comes as a string from the API
-  timestamp: string; // Comes as a string from the API
+  amount: string;
+  timestamp: string;
 }
 
 export const useDonationHistory = (profileOwnerAddress: string | null) => {
@@ -14,7 +12,6 @@ export const useDonationHistory = (profileOwnerAddress: string | null) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const suiClient = useSuiClient();
-  const suilinkPackageId = useNetworkVariable("suilinkPackageId");
 
   useEffect(() => {
     if (!profileOwnerAddress) return;
@@ -23,36 +20,50 @@ export const useDonationHistory = (profileOwnerAddress: string | null) => {
       setIsLoading(true);
       setError(null);
       try {
-        // This is a placeholder for how you might query for custom events.
-        // You would need to adjust the `queryEvents` call based on your actual Move event structure.
-        const events = await suiClient.queryEvents({
-          query: {
-            MoveModule: {
-              package: suilinkPackageId,
-              module: "donation", // Assuming a 'donation' module
-            },
-            // This is a simplified filter. You might need a more complex one.
-            // For example, filtering by a recipient field if your event has one.
+        // Query transaction blocks where this address received SUI
+        const txns = await suiClient.queryTransactionBlocks({
+          filter: {
+            ToAddress: profileOwnerAddress,
+          },
+          options: {
+            showEffects: true,
+            showInput: true,
+            showBalanceChanges: true,
           },
           order: "descending",
+          limit: 20,
         });
 
-        const donationHistory = events.data
-          .map((event) => {
-            // NOTE: The structure of `event.parsedJson` depends entirely on your Move event definition.
-            // You MUST adapt this section to match your `DonationEvent` struct in Move.
-            const { donor, amount, timestamp, recipient } =
-              event.parsedJson as any;
-            if (recipient === profileOwnerAddress) {
-              return {
-                donor,
-                amount: (BigInt(amount) / BigInt(10 ** 9)).toString(), // Example: Converting MIST to SUI
-                timestamp: new Date(parseInt(timestamp, 10)).toLocaleString(),
-              };
-            }
-            return null;
-          })
-          .filter((event): event is DonationEvent => event !== null);
+        const donationHistory: DonationEvent[] = [];
+
+        for (const txn of txns.data) {
+          if (!txn.balanceChanges) continue;
+
+          // Look for SUI balance increases (incoming transfers)
+          const suiReceived = txn.balanceChanges.filter(
+            (change) =>
+              change.owner?.AddressOwner === profileOwnerAddress &&
+              change.coinType === "0x2::sui::SUI" &&
+              BigInt(change.amount) > 0,
+          );
+
+          if (suiReceived.length > 0) {
+            // Try to get the sender from effects or transaction sender
+            const sender = txn.transaction?.data.sender || "Unknown";
+            const totalAmount = suiReceived.reduce(
+              (sum, change) => sum + BigInt(change.amount),
+              BigInt(0),
+            );
+
+            donationHistory.push({
+              donor: sender,
+              amount: (Number(totalAmount) / 10 ** 9).toFixed(2),
+              timestamp: new Date(
+                parseInt(txn.timestampMs || "0"),
+              ).toLocaleString(),
+            });
+          }
+        }
 
         setHistory(donationHistory);
       } catch (e: any) {
@@ -64,7 +75,7 @@ export const useDonationHistory = (profileOwnerAddress: string | null) => {
     };
 
     fetchHistory();
-  }, [profileOwnerAddress, suiClient, suilinkPackageId]);
+  }, [profileOwnerAddress, suiClient]);
 
   return { history, isLoading, error };
 };

@@ -20,11 +20,19 @@ const DonationHistory: React.FC<DonationHistoryProps> = ({
       >
         Recent Donations
       </h3>
-      {isLoading && <p>Loading history...</p>}
-      {error && <p style={{ color: "var(--color-error)" }}>Error: {error}</p>}
+      {isLoading && (
+        <p style={{ color: "var(--color-text-secondary)" }}>
+          Loading donation history...
+        </p>
+      )}
+      {error && (
+        <p style={{ color: "var(--color-text-secondary)", fontSize: "14px" }}>
+          💡 Donation tracking coming soon! (Smart contract module pending)
+        </p>
+      )}
       {!isLoading && !error && history.length === 0 && (
         <p style={{ color: "var(--color-text-secondary)" }}>
-          No donations yet.
+          🎁 Be the first to support this athlete! Donations will appear here.
         </p>
       )}
       {!isLoading && !error && history.length > 0 && (

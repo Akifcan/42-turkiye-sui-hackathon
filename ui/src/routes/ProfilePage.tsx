@@ -1,12 +1,17 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useCurrentAccount } from "@mysten/dapp-kit";
 import { useProfileData } from "../hooks/useProfileData";
 import { ProfileCard } from "../components/ui/ProfileCard";
+import DonationWidget from "../features/donations/DonationWidget";
+import DonationHistory from "../features/donations/DonationHistory";
+import TopSupporters from "../features/donations/TopSupporters";
 import { ProfileData } from "../types";
 
 export function ProfilePage() {
   const { username } = useParams<{ username: string }>();
   const { fetchProfile, loading, error } = useProfileData();
+  const currentAccount = useCurrentAccount();
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
 
   useEffect(() => {
@@ -14,6 +19,10 @@ export function ProfilePage() {
       if (username) {
         try {
           const data = await fetchProfile(username);
+          // Fallback if owner is missing
+          if (!data.owner && currentAccount?.address) {
+            data.owner = currentAccount.address;
+          }
           setProfileData(data);
         } catch (err) {
           console.error("Error fetching profile:", err);
@@ -23,7 +32,10 @@ export function ProfilePage() {
 
     loadProfile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [username]);
+  }, [username, currentAccount?.address]);
+
+  const recipientAddress = profileData?.owner || currentAccount?.address || "";
+  const ownerForLists = profileData?.owner || currentAccount?.address || null;
 
   return (
     <div
@@ -40,6 +52,7 @@ export function ProfilePage() {
           zIndex: 1,
           display: "flex",
           flexDirection: "column",
+          gap: "var(--spacing-xl)",
         }}
       >
         {/* Loading State */}
@@ -107,6 +120,15 @@ export function ProfilePage() {
             links={profileData?.links || []}
             nfts={profileData?.nfts || []}
           />
+        )}
+
+        {/* Donation Section - always render when profileData is loaded */}
+        {!loading && !error && profileData && (
+          <>
+            <DonationWidget recipientAddress={recipientAddress} />
+            <DonationHistory profileOwnerAddress={ownerForLists} />
+            <TopSupporters profileOwnerAddress={ownerForLists} />
+          </>
         )}
 
         {/* No Profile Data State */}

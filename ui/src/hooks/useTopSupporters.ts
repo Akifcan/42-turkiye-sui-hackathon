@@ -1,14 +1,9 @@
 import { useSuiClient } from "@mysten/dapp-kit";
 import { useEffect, useState } from "react";
-import { useNetworkVariable } from "../networkConfig";
 
-// Assuming a structure for donation events from your smart contract
-interface DonationEvent {
+interface Supporter {
   donor: string;
   amount: string;
-}
-
-interface Supporter extends DonationEvent {
   totalDonated: number;
 }
 
@@ -17,7 +12,6 @@ export const useTopSupporters = (profileOwnerAddress: string | null) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const suiClient = useSuiClient();
-  const suilinkPackageId = useNetworkVariable("suilinkPackageId");
 
   useEffect(() => {
     if (!profileOwnerAddress) return;
@@ -26,41 +20,52 @@ export const useTopSupporters = (profileOwnerAddress: string | null) => {
       setIsLoading(true);
       setError(null);
       try {
-        const events = await suiClient.queryEvents({
-          query: {
-            MoveModule: {
-              package: suilinkPackageId,
-              module: "donation",
-            },
+        // Query transaction blocks where this address received SUI
+        const txns = await suiClient.queryTransactionBlocks({
+          filter: {
+            ToAddress: profileOwnerAddress,
           },
+          options: {
+            showEffects: true,
+            showInput: true,
+            showBalanceChanges: true,
+          },
+          order: "descending",
+          limit: 50, // Get more for aggregation
         });
-
-        const donations = events.data
-          .map((event) => {
-            const { donor, amount, recipient } = event.parsedJson as any;
-            if (recipient === profileOwnerAddress) {
-              return {
-                donor,
-                amount: (BigInt(amount) / BigInt(10 ** 9)).toString(),
-              };
-            }
-            return null;
-          })
-          .filter((event): event is DonationEvent => event !== null);
 
         const supporterMap = new Map<string, number>();
-        donations.forEach((donation) => {
-          const currentTotal = supporterMap.get(donation.donor) || 0;
-          supporterMap.set(
-            donation.donor,
-            currentTotal + parseFloat(donation.amount),
+
+        for (const txn of txns.data) {
+          if (!txn.balanceChanges) continue;
+
+          // Look for SUI balance increases (incoming transfers)
+          const suiReceived = txn.balanceChanges.filter(
+            (change) =>
+              change.owner?.AddressOwner === profileOwnerAddress &&
+              change.coinType === "0x2::sui::SUI" &&
+              BigInt(change.amount) > 0,
           );
-        });
+
+          if (suiReceived.length > 0) {
+            const sender = txn.transaction?.data.sender || "Unknown";
+            if (sender === "Unknown") continue;
+
+            const totalAmount = suiReceived.reduce(
+              (sum, change) => sum + BigInt(change.amount),
+              BigInt(0),
+            );
+
+            const amountInSUI = Number(totalAmount) / 10 ** 9;
+            const currentTotal = supporterMap.get(sender) || 0;
+            supporterMap.set(sender, currentTotal + amountInSUI);
+          }
+        }
 
         const sortedSupporters = Array.from(supporterMap.entries())
           .map(([donor, totalDonated]) => ({
             donor,
-            amount: totalDonated.toString(),
+            amount: totalDonated.toFixed(2),
             totalDonated,
           }))
           .sort((a, b) => b.totalDonated - a.totalDonated)
@@ -76,7 +81,7 @@ export const useTopSupporters = (profileOwnerAddress: string | null) => {
     };
 
     fetchSupporters();
-  }, [profileOwnerAddress, suiClient, suilinkPackageId]);
+  }, [profileOwnerAddress, suiClient]);
 
   return { supporters, isLoading, error };
 };
